@@ -12,7 +12,7 @@ import * as ImagePicker from "expo-image-picker";
 import ErrorComponent from "../component/ErrorComponent";
 import { validateForm } from "../utils/validationCheck";
 import { useDispatch } from "react-redux";
-import { signupUser } from "../redux/reducer/authReducer";
+import { saveUserData, signupUser } from "../redux/reducer/authReducer";
 
 const SignUpForm = () => {
   const [formData, setFormData] = useState({
@@ -64,8 +64,12 @@ const SignUpForm = () => {
   const handleSignUp = async () => {
     const { isValid, errors } = validateForm(formData);
     if (isValid) {
-      const result=await dispatch(signupUser({email:formData.email,password:formData.password}))
-      console.log(result);
+      const userCredential=await dispatch(signupUser({email:formData.email,password:formData.password}))
+      const userUID=userCredential?.payload?.user?.uid;
+      if(true){
+        const signupResponse=await dispatch(saveUserData({userUID,formData}))
+        console.log(signupResponse);
+      }
     } else {
       console.log("Errors");
       setErrors(errors);
@@ -142,6 +146,7 @@ const SignUpForm = () => {
         >
           <Text className="text-center text-white">Upload Photo</Text>
         </TouchableOpacity>
+        <ErrorComponent errorMessage={errors.picture}/>
         {formData.picture && (
           <Image
             source={{ uri: formData.picture }}

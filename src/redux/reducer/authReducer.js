@@ -29,8 +29,7 @@ export const saveUserData = createAsyncThunk(
         await uploadBytes(imageRef, data.formData.picture);
         imageURL = await getDownloadURL(imageRef);
       }
-
-      // Add user data to Firestore
+      
       const userData = {
         firstName: data?.formData.firstName,
         lastName: data?.formData.lastName,
@@ -43,7 +42,7 @@ export const saveUserData = createAsyncThunk(
       const userDocRef = await addDoc(collection(db, "users"), userData);
       console.log("Document written with ID: ", userDocRef);
 
-      return userDocRef; // Return the DocumentReference for additional operations
+      return userDocRef;
     } catch (error) {
       console.error("Error saving user data:", error);
       throw error;

@@ -80,11 +80,11 @@ const SignUpForm = ({ navigation }) => {
         return;
       }
       const userUID = userCredential?.payload?.user?.uid;
+      console.log(userUID);
       if (userUID) {
         const signupResponse = await dispatch(
           saveUserData({ userUID, formData })
         );
-        console.log(signupResponse);
         if (signupResponse?.payload) {
           setShowConfirmationModal(true);
         }

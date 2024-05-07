@@ -187,13 +187,21 @@ const SignUpForm = ({ navigation }) => {
           <View className="mb-4">
             <View className="flex flex-row justify-between items-center">
               <TouchableOpacity
-                className="bg-blue-500 w-[48%] rounded-md px-4 py-2 sm:py-3"
+                className="bg-blue-500 rounded-md px-4 py-2 sm:py-3"
                 onPress={handleImagePick}
               >
-                <FontAwesome5 name="image" size={28} color="#fff" className="self-center"/>
+                <FontAwesome5
+                  name="image"
+                  size={28}
+                  color="#fff"
+                  className="text-center"
+                />
               </TouchableOpacity>
-              <TouchableOpacity onPress={()=>setShowCamera(true)}  className="bg-blue-500 w-[48%] rounded-md px-4 py-2 sm:py-3">
-                <FontAwesome5 name="camera" size={28} color="#fff"/>
+              <TouchableOpacity
+                onPress={() => setShowCamera(true)}
+                className="bg-blue-500 rounded-md px-4 py-2 sm:py-3"
+              >
+                <FontAwesome5 name="camera" size={28} color="#fff" />
               </TouchableOpacity>
             </View>
             <ErrorComponent errorMessage={errors.picture} />
@@ -217,19 +225,26 @@ const SignUpForm = ({ navigation }) => {
               <Text className="text-center text-white">Signup</Text>
             )}
           </TouchableOpacity>
-          <ConfirmationModal
-            modalTitle={"Succesfully"}
-            modalSubTitle={"User registered succesfully. click ok to HomePage"}
-            visible={showConfirmationModal}
-            onClose={() => setShowConfirmationModal(false)}
-            onConfirm={handleNavigate}
-            btnOkText={"Ok"}
-          />
-          <CameraModal
-            visible={showCamera}
-            setShowCamera={setShowCamera}
-            setFormData={setFormData}
-          />
+          {showConfirmationModal && (
+            <ConfirmationModal
+              modalTitle={"Succesfully"}
+              modalSubTitle={
+                "User registered succesfully. click ok to HomePage"
+              }
+              visible={showConfirmationModal}
+              onClose={() => setShowConfirmationModal(false)}
+              onConfirm={handleNavigate}
+              btnOkText={"Ok"}
+            />
+          )}
+          {showCamera && (
+            <CameraModal
+              visible={showCamera}
+              setShowCamera={setShowCamera}
+              setFormData={setFormData}
+              formData={formData}
+            />
+          )}
         </View>
       </View>
     </ScrollView>

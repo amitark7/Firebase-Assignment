@@ -5,7 +5,7 @@ const HomePage = () => {
   return (
     <ScrollView>
       <StatusBar />
-      <Text>This is Home Page</Text>
+        <Text>This is Home Page</Text>
     </ScrollView>
   );
 };

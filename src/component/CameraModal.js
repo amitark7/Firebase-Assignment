@@ -3,7 +3,7 @@ import { Camera } from "expo-camera";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 
-const CameraModal = ({visible,setShowCamera,setFormData}) => {
+const CameraModal = ({visible,setShowCamera,setFormData,formData}) => {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [camera, setCamera] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
@@ -11,7 +11,7 @@ const CameraModal = ({visible,setShowCamera,setFormData}) => {
   const takePicture = async () => {
     if (camera) {
       const data = await camera.takePictureAsync(null);
-      setFormData({...FormData,picture:data.uri});
+      setFormData({...formData,picture:data.uri});
       setShowCamera(false)
     }
   };

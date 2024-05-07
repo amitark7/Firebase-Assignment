@@ -1,40 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Camera } from "expo-camera";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { Modal, TouchableOpacity, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 
-const CameraModal = ({visible,setShowCamera,setFormData,formData}) => {
-  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+const CameraModal = ({ setShowCamera,setImage }) => {
   const [camera, setCamera] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
 
   const takePicture = async () => {
     if (camera) {
       const data = await camera.takePictureAsync(null);
-      setFormData({...formData,picture:data.uri});
+      setImage(data.uri);
       setShowCamera(false)
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      const cameraStatus = await Camera.requestCameraPermissionsAsync();
-      setHasCameraPermission(cameraStatus.status === "granted");
-    })();
-  }, []);
-
-  if (hasCameraPermission === false) {
-    return <View><Text>No access to camera</Text></View>;
-  }
-
   return (
-    <Modal visible={visible} className="flex-1">
+    <Modal className="flex-1">
       <View className="flex-1">
-        <Camera
-          ref={(ref) => setCamera(ref)}
-          className="flex-1"
-          type={type}
-        />
+        <Camera ref={(ref) => setCamera(ref)} className="flex-1" type={type} />
         <View className="flex-row justify-between items-center p-5">
           <TouchableOpacity
             className="p-4 rounded-full bg-gray-500"

@@ -22,9 +22,7 @@ const ConfirmationModal = ({
       <View className="flex-1">
         <View className="fixed inset-0 flex-1 justify-center items-center">
           <View className="modal-overlay fixed inset-0 bg-red-500 opacity-50"></View>
-          <View
-            className="modal-container bg-gray-200  w-[80%] md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto flex flex-col "
-          >
+          <View className="modal-container bg-gray-200  w-[80%] md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto flex flex-col ">
             <View className="modal-content py-6 text-left px-10">
               <View className="flex flex-row justify-between items-center pb-3 mb-1">
                 <Text className="text-lg font-bold">{modalTitle}</Text>

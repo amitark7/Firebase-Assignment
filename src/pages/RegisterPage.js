@@ -5,18 +5,17 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Alert,
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import ErrorComponent from "../component/ErrorComponent";
-import { validateForm } from "../utils/validationCheck";
 import { useDispatch, useSelector } from "react-redux";
-import { saveUserData, signupUser } from "../redux/reducer/authReducer";
-import ConfirmationModal from "../component/ConfirmationModal";
 import { FontAwesome5 } from "@expo/vector-icons";
 import CameraModal from "../component/CameraModal";
+import { saveUserData, signupUser } from "../redux/reducer/authReducer";
+import ConfirmationModal from "../component/ConfirmationModal";
+import ErrorComponent from "../component/ErrorComponent";
+import { validateForm } from "../utils/validationCheck";
+import { handleImagePicker } from "../utils/handleImagePicker";
 
 const SignUpForm = ({ navigation }) => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -43,6 +42,7 @@ const SignUpForm = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [image, setImage] = useState(null);
 
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
@@ -50,24 +50,8 @@ const SignUpForm = ({ navigation }) => {
   };
 
   const handleImagePick = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission required",
-        "You need to allow access to your media library to upload a photo."
-      );
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.cancelled) {
-      setFormData({ ...formData, picture: result.assets[0].uri });
-    }
+    const imageURL=await handleImagePicker()
+    setFormData({...formData,picture:imageURL})
   };
 
   const handleSignUp = async () => {
@@ -81,13 +65,10 @@ const SignUpForm = ({ navigation }) => {
         return;
       }
       const userUID = userCredential?.payload?.user?.uid;
+      setFormData({...formData,picture:image})
       if (userUID) {
-        const signupResponse = await dispatch(
-          saveUserData({ userUID, formData })
-        );
-        if (signupResponse?.payload) {
-          setShowConfirmationModal(true);
-        }
+        await dispatch(saveUserData({ userUID, formData }));
+        setShowConfirmationModal(true);
       }
     } else {
       setErrors(errors);
@@ -238,12 +219,7 @@ const SignUpForm = ({ navigation }) => {
             />
           )}
           {showCamera && (
-            <CameraModal
-              visible={showCamera}
-              setShowCamera={setShowCamera}
-              setFormData={setFormData}
-              formData={formData}
-            />
+            <CameraModal setShowCamera={setShowCamera} />
           )}
         </View>
       </View>

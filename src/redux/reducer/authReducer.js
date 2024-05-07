@@ -37,8 +37,7 @@ export const saveUserData = createAsyncThunk(
         uid: data.userUID,
       };
 
-      const userDocRef = await addDoc(collection(db, "users"), userData);
-      return userDocRef;
+      await addDoc(collection(db, "users"), userData);
     } catch (error) {
       return error.response;
     }

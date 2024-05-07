@@ -13,8 +13,7 @@ export const signupUser = createAsyncThunk("auth/signupUser", async (data) => {
     );
     return response;
   } catch (error) {
-    console.log(error.response);
-    return error.response;
+    return error;
   }
 });
 
@@ -23,13 +22,12 @@ export const saveUserData = createAsyncThunk(
   async (data) => {
     try {
       const imageRef = ref(imageStorage, "images/" + Date.now());
-
       let imageURL = null;
       if (data.formData.picture) {
         await uploadBytes(imageRef, data.formData.picture);
         imageURL = await getDownloadURL(imageRef);
       }
-      
+
       const userData = {
         firstName: data?.formData.firstName,
         lastName: data?.formData.lastName,
@@ -40,16 +38,12 @@ export const saveUserData = createAsyncThunk(
       };
 
       const userDocRef = await addDoc(collection(db, "users"), userData);
-      console.log("Document written with ID: ", userDocRef);
-
       return userDocRef;
     } catch (error) {
-      console.error("Error saving user data:", error);
-      throw error;
+      return error.response;
     }
   }
 );
-
 
 const authSlice = createSlice({
   name: "auth",
@@ -58,6 +52,27 @@ const authSlice = createSlice({
     loading: false,
   },
   reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(signupUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(signupUser.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(signupUser.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(saveUserData.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(saveUserData.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(saveUserData.rejected, (state) => {
+        state.loading = false;
+      });
+  },
 });
 
 export default authSlice.reducer;

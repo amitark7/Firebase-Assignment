@@ -5,20 +5,26 @@ import { NativeWindStyleSheet } from "nativewind";
 import "./src/styles.css";
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
+import HomePage from "./src/pages/HomePage";
 
 NativeWindStyleSheet.setOutput({
   default: "native",
 });
 
 export default function App() {
+  const Stack=createNativeStackNavigator();
   return (
     <Provider store={store}>
-      <ScrollView contentContainerStyle={{ flex: 1 }}>
-        <View className="bg-gray-200 flex items-center justify-center flex-1 mt-5">
-          <StatusBar backgroundColor="#61dafb" />
-          <RegisterPage />
-        </View>
-      </ScrollView>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{
+          headerShown:false
+        }}>
+          <Stack.Screen name="signup"  component={RegisterPage}/>
+          <Stack.Screen name="HomePage" component={HomePage}/>
+        </Stack.Navigator>
+      </NavigationContainer>
     </Provider>
   );
 }

@@ -6,15 +6,17 @@ import {
   TouchableOpacity,
   Image,
   Alert,
-  ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import ErrorComponent from "../component/ErrorComponent";
 import { validateForm } from "../utils/validationCheck";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { saveUserData, signupUser } from "../redux/reducer/authReducer";
+import ConfirmationModal from "../component/ConfirmationModal";
 
-const SignUpForm = () => {
+const SignUpForm = ({ navigation }) => {
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -34,6 +36,7 @@ const SignUpForm = () => {
     picture: null,
   });
   const dispatch = useDispatch();
+  const loading = useSelector((state) => state.auth.loading);
 
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
@@ -64,16 +67,31 @@ const SignUpForm = () => {
   const handleSignUp = async () => {
     const { isValid, errors } = validateForm(formData);
     if (isValid) {
-      const userCredential=await dispatch(signupUser({email:formData.email,password:formData.password}))
-      const userUID=userCredential?.payload?.user?.uid;
-      if(true){
-        const signupResponse=await dispatch(saveUserData({userUID,formData}))
+      const userCredential = await dispatch(
+        signupUser({ email: formData.email, password: formData.password })
+      );
+      if(userCredential?.payload?.code){
+        setErrors({...errors,email:"Email already registered"})
+        return;
+      }
+      const userUID = userCredential?.payload?.user?.uid;
+      if (userUID) {
+        const signupResponse = await dispatch(
+          saveUserData({ userUID, formData })
+        );
         console.log(signupResponse);
+        if (signupResponse?.payload) {
+          setShowConfirmationModal(true);
+        }
       }
     } else {
-      console.log("Errors");
       setErrors(errors);
     }
+  };
+
+  const handleNavigate = () => {
+    navigation.replace("HomePage");
+    setShowConfirmationModal(false);
   };
 
   return (
@@ -146,7 +164,7 @@ const SignUpForm = () => {
         >
           <Text className="text-center text-white">Upload Photo</Text>
         </TouchableOpacity>
-        <ErrorComponent errorMessage={errors.picture}/>
+        <ErrorComponent errorMessage={errors.picture} />
         {formData.picture && (
           <Image
             source={{ uri: formData.picture }}
@@ -155,11 +173,26 @@ const SignUpForm = () => {
         )}
       </View>
       <TouchableOpacity
-        className="bg-green-500 rounded-md px-4 py-2 sm:py-3"
+        className={`${
+          loading ? "bg-gray-200" : "bg-green-500"
+        } rounded-md px-4 py-2 sm:py-3 text-center`}
         onPress={handleSignUp}
+        disabled={loading}
       >
-        <Text className="text-center text-white">Sign Up</Text>
+        {loading ? (
+          <ActivityIndicator size="small" color="#000000" />
+        ) : (
+          <Text className="text-center text-white">Signup</Text>
+        )}
       </TouchableOpacity>
+      <ConfirmationModal
+        modalTitle={"Succesfully"}
+        modalSubTitle={"User registered succesfully. click ok to HomePage"}
+        visible={showConfirmationModal}
+        onClose={() => setShowConfirmationModal(false)}
+        onConfirm={handleNavigate}
+        btnOkText={"Ok"}
+      />
     </View>
   );
 };

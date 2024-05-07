@@ -1,7 +1,7 @@
 export const validateForm = (userData) => {
   let isValid = true;
   const errors = {};
-  if (userData.firstName.trim() === "" || userData.firstName.length < 3) {
+  if (userData.firstName?.trim() === "" || userData.firstName?.length < 3) {
     errors.firstName = "First name must be at least 3 characters.";
     isValid = false;
   }
@@ -14,7 +14,7 @@ export const validateForm = (userData) => {
   if (!userData.phoneNumber.trim()) {
     errors.phoneNumber = "Phone number is required";
     isValid = false;
-  } else if (userData.phoneNumber.trim().length > 10) {
+  } else if (userData.phoneNumber?.trim().length > 10) {
     errors.phoneNumber = "Phone number must be at most 10 characters long";
     isValid = false;
   }

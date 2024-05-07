@@ -7,6 +7,8 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  SafeAreaView,
+  ScrollView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import ErrorComponent from "../component/ErrorComponent";
@@ -98,125 +100,129 @@ const SignUpForm = ({ navigation }) => {
   };
 
   return (
-    <View className="w-[90%] sm:w-[50%] lg:w-[35%] 2xl:w-[30%] mx-auto bg-white py-8 px-8 mt-10 rounded-lg shadow-lg">
-      <View className="items-center mb-5 sm:mb-8">
-        <Text className="text-3xl font-bold">Signup Form</Text>
-      </View>
-      <View className="mb-4">
-        <TextInput
-          className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
-          placeholder="First Name"
-          value={formData.firstName}
-          onChangeText={(value) => handleChange("firstName", value)}
-        />
-        <ErrorComponent errorMessage={errors.firstName} />
-      </View>
-      <View className="mb-4">
-        <TextInput
-          className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
-          placeholder="Last Name"
-          value={formData.lastName}
-          onChangeText={(value) => handleChange("lastName", value)}
-        />
-        <ErrorComponent errorMessage={errors.lastName} />
-      </View>
-      <View className="mb-4">
-        <TextInput
-          className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
-          placeholder="Email"
-          keyboardType="email-address"
-          value={formData.email}
-          onChangeText={(value) => handleChange("email", value)}
-        />
-        <ErrorComponent errorMessage={errors.email} />
-      </View>
-      <View className="mb-4">
-        <TextInput
-          className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
-          placeholder="Phone Number"
-          keyboardType="phone-pad"
-          value={formData.phoneNumber}
-          onChangeText={(value) => handleChange("phoneNumber", value)}
-        />
-        <ErrorComponent errorMessage={errors.phoneNumber} />
-      </View>
-      <View className="mb-4">
-        <TextInput
-          className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
-          placeholder="Password"
-          secureTextEntry={!showPassword}
-          value={formData.password}
-          onChangeText={(value) => handleChange("password", value)}
-        />
-        <ErrorComponent errorMessage={errors.password} />
-        <TouchableOpacity
-          onPress={()=>setShowPassword(!showPassword)}
-          className="absolute top-3 right-2"
-        >
-          <FontAwesome5
-            name={showPassword ? "eye-slash" : "eye"}
-            size={18}
-            color="gray"
+    <ScrollView contentContainerStyle={{'justifyContent':'center'}}>
+    <View className="flex-1 items-center justify-center mt-20">
+      <View className="w-[90%] sm:w-[50%] lg:w-[35%] 2xl:w-[30%] mx-auto bg-white py-8 px-8 mb-10 rounded-lg shadow-lg">
+        <View className="items-center mb-5 sm:mb-8">
+          <Text className="text-3xl font-bold">Signup Form</Text>
+        </View>
+        <View className="mb-4">
+          <TextInput
+            className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
+            placeholder="First Name"
+            value={formData.firstName}
+            onChangeText={(value) => handleChange("firstName", value)}
           />
+          <ErrorComponent errorMessage={errors.firstName} />
+        </View>
+        <View className="mb-4">
+          <TextInput
+            className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
+            placeholder="Last Name"
+            value={formData.lastName}
+            onChangeText={(value) => handleChange("lastName", value)}
+          />
+          <ErrorComponent errorMessage={errors.lastName} />
+        </View>
+        <View className="mb-4">
+          <TextInput
+            className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
+            placeholder="Email"
+            keyboardType="email-address"
+            value={formData.email}
+            onChangeText={(value) => handleChange("email", value)}
+          />
+          <ErrorComponent errorMessage={errors.email} />
+        </View>
+        <View className="mb-4">
+          <TextInput
+            className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
+            placeholder="Phone Number"
+            keyboardType="phone-pad"
+            value={formData.phoneNumber}
+            onChangeText={(value) => handleChange("phoneNumber", value)}
+          />
+          <ErrorComponent errorMessage={errors.phoneNumber} />
+        </View>
+        <View className="mb-4">
+          <TextInput
+            className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
+            placeholder="Password"
+            secureTextEntry={!showPassword}
+            value={formData.password}
+            onChangeText={(value) => handleChange("password", value)}
+          />
+          <ErrorComponent errorMessage={errors.password} />
+          <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+            className="absolute top-3 right-2"
+          >
+            <FontAwesome5
+              name={showPassword ? "eye-slash" : "eye"}
+              size={18}
+              color="gray"
+            />
+          </TouchableOpacity>
+        </View>
+        <View className="mb-4">
+          <TextInput
+            className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
+            placeholder="Confirm Password"
+            secureTextEntry={!showConfirmPassword}
+            value={formData.confirmPassword}
+            onChangeText={(value) => handleChange("confirmPassword", value)}
+          />
+          <ErrorComponent errorMessage={errors.confirmPassword} />
+          <TouchableOpacity
+            onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute top-3 right-2"
+          >
+            <FontAwesome5
+              name={showConfirmPassword ? "eye-slash" : "eye"}
+              size={18}
+              color="gray"
+            />
+          </TouchableOpacity>
+        </View>
+        <View className="mb-4">
+          <TouchableOpacity
+            className="bg-blue-500 rounded-md px-4 py-2 sm:py-3"
+            onPress={handleImagePick}
+          >
+            <Text className="text-center text-white">Upload Photo</Text>
+          </TouchableOpacity>
+          <ErrorComponent errorMessage={errors.picture} />
+          {formData.picture && (
+            <Image
+              source={{ uri: formData.picture }}
+              className="w-24 h-24 rounded-md mb-4"
+            />
+          )}
+        </View>
+        <TouchableOpacity
+          className={`${
+            loading ? "bg-gray-200" : "bg-green-500"
+          } rounded-md px-4 py-2 sm:py-3 text-center`}
+          onPress={handleSignUp}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Text className="text-center text-white">Signup</Text>
+          )}
         </TouchableOpacity>
-      </View>
-      <View className="mb-4">
-        <TextInput
-          className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
-          placeholder="Confirm Password"
-          secureTextEntry={!showConfirmPassword}
-          value={formData.confirmPassword}
-          onChangeText={(value) => handleChange("confirmPassword", value)}
+        <ConfirmationModal
+          modalTitle={"Succesfully"}
+          modalSubTitle={"User registered succesfully. click ok to HomePage"}
+          visible={showConfirmationModal}
+          onClose={() => setShowConfirmationModal(false)}
+          onConfirm={handleNavigate}
+          btnOkText={"Ok"}
         />
-        <ErrorComponent errorMessage={errors.confirmPassword} />
-        <TouchableOpacity
-          onPress={()=>setShowConfirmPassword(!showConfirmPassword)}
-          className="absolute top-3 right-2"
-        >
-          <FontAwesome5
-            name={showConfirmPassword ? "eye-slash" : "eye"}
-            size={18}
-            color="gray"
-          />
-        </TouchableOpacity>
       </View>
-      <View className="mb-4">
-        <TouchableOpacity
-          className="bg-blue-500 rounded-md px-4 py-2 sm:py-3"
-          onPress={handleImagePick}
-        >
-          <Text className="text-center text-white">Upload Photo</Text>
-        </TouchableOpacity>
-        <ErrorComponent errorMessage={errors.picture} />
-        {formData.picture && (
-          <Image
-            source={{ uri: formData.picture }}
-            className="w-24 h-24 rounded-md mb-4"
-          />
-        )}
-      </View>
-      <TouchableOpacity
-        className={`${
-          loading ? "bg-gray-200" : "bg-green-500"
-        } rounded-md px-4 py-2 sm:py-3 text-center`}
-        onPress={handleSignUp}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator size="small" color="#FFFFFF" />
-        ) : (
-          <Text className="text-center text-white">Signup</Text>
-        )}
-      </TouchableOpacity>
-      <ConfirmationModal
-        modalTitle={"Succesfully"}
-        modalSubTitle={"User registered succesfully. click ok to HomePage"}
-        visible={showConfirmationModal}
-        onClose={() => setShowConfirmationModal(false)}
-        onConfirm={handleNavigate}
-        btnOkText={"Ok"}
-      />
     </View>
+    </ScrollView>
   );
 };
 

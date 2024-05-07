@@ -1,5 +1,3 @@
-import { StatusBar } from "expo-status-bar";
-import { ScrollView, View } from "react-native";
 import RegisterPage from "./src/pages/RegisterPage";
 import { NativeWindStyleSheet } from "nativewind";
 import "./src/styles.css";

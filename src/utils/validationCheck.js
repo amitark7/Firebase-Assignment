@@ -30,6 +30,9 @@ export const validateForm = (userData) => {
   if (!userData.password.trim()) {
     errors.password = "Password is required";
     isValid = false;
+  } else if (userData.password.length < 8) {
+    errors.password = "Password length should be 8";
+    isValid = false;
   } else if (
     !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}/.test(
       userData.password

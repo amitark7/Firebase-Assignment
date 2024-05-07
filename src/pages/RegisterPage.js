@@ -14,6 +14,7 @@ import { validateForm } from "../utils/validationCheck";
 import { useDispatch, useSelector } from "react-redux";
 import { saveUserData, signupUser } from "../redux/reducer/authReducer";
 import ConfirmationModal from "../component/ConfirmationModal";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 const SignUpForm = ({ navigation }) => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -37,6 +38,8 @@ const SignUpForm = ({ navigation }) => {
   });
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.auth.loading);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
@@ -70,8 +73,8 @@ const SignUpForm = ({ navigation }) => {
       const userCredential = await dispatch(
         signupUser({ email: formData.email, password: formData.password })
       );
-      if(userCredential?.payload?.code){
-        setErrors({...errors,email:"Email already registered"})
+      if (userCredential?.payload?.code) {
+        setErrors({ ...errors, email: "Email already registered" });
         return;
       }
       const userUID = userCredential?.payload?.user?.uid;
@@ -141,21 +144,41 @@ const SignUpForm = ({ navigation }) => {
         <TextInput
           className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
           placeholder="Password"
-          secureTextEntry={true}
+          secureTextEntry={!showPassword}
           value={formData.password}
           onChangeText={(value) => handleChange("password", value)}
         />
         <ErrorComponent errorMessage={errors.password} />
+        <TouchableOpacity
+          onPress={()=>setShowPassword(!showPassword)}
+          className="absolute top-3 right-2"
+        >
+          <FontAwesome5
+            name={showPassword ? "eye-slash" : "eye"}
+            size={18}
+            color="gray"
+          />
+        </TouchableOpacity>
       </View>
       <View className="mb-4">
         <TextInput
           className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
           placeholder="Confirm Password"
-          secureTextEntry={true}
+          secureTextEntry={!showConfirmPassword}
           value={formData.confirmPassword}
           onChangeText={(value) => handleChange("confirmPassword", value)}
         />
         <ErrorComponent errorMessage={errors.confirmPassword} />
+        <TouchableOpacity
+          onPress={()=>setShowConfirmPassword(!showConfirmPassword)}
+          className="absolute top-3 right-2"
+        >
+          <FontAwesome5
+            name={showConfirmPassword ? "eye-slash" : "eye"}
+            size={18}
+            color="gray"
+          />
+        </TouchableOpacity>
       </View>
       <View className="mb-4">
         <TouchableOpacity
@@ -180,7 +203,7 @@ const SignUpForm = ({ navigation }) => {
         disabled={loading}
       >
         {loading ? (
-          <ActivityIndicator size="small" color="#000000" />
+          <ActivityIndicator size="small" color="#FFFFFF" />
         ) : (
           <Text className="text-center text-white">Signup</Text>
         )}

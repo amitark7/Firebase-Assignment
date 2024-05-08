@@ -1,5 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
 import { auth, db, imageStorage } from "../../firebase/firebaseConfig";
@@ -44,6 +47,18 @@ export const saveUserData = createAsyncThunk(
   }
 );
 
+export const userLogin = createAsyncThunk("auth/userLogin", async (data) => {
+  try {
+    const response = await signInWithEmailAndPassword(
+      auth,
+      data.email,
+      data.password
+    );
+    return response.user;
+  } catch (error) {
+    return error;
+  }
+});
 const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -69,6 +84,16 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(saveUserData.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(userLogin.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(userLogin.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(userLogin.rejected, (state) => {
         state.loading = false;
       });
   },

@@ -117,6 +117,7 @@ const UserRegisterPage = ({ navigation }) => {
               keyboardType="email-address"
               value={formData.email}
               onChangeText={(value) => handleChange("email", value)}
+              autoCapitalize="none"
             />
             <ErrorComponent errorMessage={errors.email} />
           </View>
@@ -137,6 +138,7 @@ const UserRegisterPage = ({ navigation }) => {
               secureTextEntry={!showPassword}
               value={formData.password}
               onChangeText={(value) => handleChange("password", value)}
+              autoCapitalize="none"
             />
             <ErrorComponent errorMessage={errors.password} />
             <TouchableOpacity
@@ -157,6 +159,7 @@ const UserRegisterPage = ({ navigation }) => {
               secureTextEntry={!showConfirmPassword}
               value={formData.confirmPassword}
               onChangeText={(value) => handleChange("confirmPassword", value)}
+              autoCapitalize="none"
             />
             <ErrorComponent errorMessage={errors.confirmPassword} />
             <TouchableOpacity

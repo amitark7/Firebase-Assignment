@@ -1,59 +1,77 @@
-export const validateForm = (userData) => {
+const errors = {};
+
+const validateEmail = (email) => {
+  if (!/\S+@\S+\.\S+/.test(email)) {
+    return "Email is invalid";
+  }
+};
+
+const validateField = (field, data = null) => {
+  if (!data.trim()) {
+    return `${field} is required`;
+  }
+};
+
+const validatePassword = (password) => {
+  errors.password = validateField("Password", password);
+  if (!errors.password) {
+    if (password.length < 8) {
+      errors.password = "Password length should be 8";
+    } else if (
+      !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}/.test(password)
+    ) {
+      errors.password =
+        "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special symbol";
+    }
+  }
+};
+
+const validateConfirmPassword = (password, confirmPassword) => {
+  return password !== confirmPassword && "Password do not match";
+};
+
+const validatePhoneNumber = (phoneNumber, length) => {
+  return (
+    phoneNumber?.trim().length !== length &&
+    "Phone number must be 10 characters long"
+  );
+};
+
+export const validateForm = (userData, isLogin = false) => {
   let isValid = true;
-  const errors = {};
-  if (userData.firstName?.trim() === "" || userData.firstName?.length < 3) {
-    errors.firstName = "First name must be at least 3 characters.";
-    isValid = false;
+  errors.email = validateField("Email", userData?.email);
+  if (!errors.email) {
+    errors.email = validateEmail(userData?.email);
+  }
+  isLogin
+    ? (errors.password = validateField("Password", userData?.password))
+    : validatePassword(userData?.password);
+
+  if (!isLogin) {
+    errors.firstName = validateField("Last name", userData?.firstName);
+    errors.lastName = validateField("First Name", userData?.lastName);
+    errors.picture = validateField("Picture", userData?.picture);
+    errors.confirmPassword = validateField(
+      "Confim Password",
+      userData?.confirmPassword
+    );
+    if (!errors.confirmPassword) {
+      errors.confirmPassword = validateConfirmPassword(
+        userData?.password,
+        userData?.confirmPassword
+      );
+    }
+    errors.phoneNumber = validateField("Phone Number", userData?.phoneNumber);
+    if (!errors.phoneNumber) {
+      errors.phoneNumber = validatePhoneNumber(userData?.phoneNumber, 10);
+    }
   }
 
-  if (!userData.lastName.trim()) {
-    errors.lastName = "Last name is required";
-    isValid = false;
-  }
-
-  if (!userData.phoneNumber.trim()) {
-    errors.phoneNumber = "Phone number is required";
-    isValid = false;
-  } else if (userData.phoneNumber?.trim().length !== 10) {
-    errors.phoneNumber = "Phone number must be 10 characters long";
-    isValid = false;
-  }
-
-  if (!userData.email.trim()) {
-    errors.email = "Email is required";
-    isValid = false;
-  } else if (!/\S+@\S+\.\S+/.test(userData.email)) {
-    errors.email = "Email is invalid";
-    isValid = false;
-  }
-
-  if (!userData.password.trim()) {
-    errors.password = "Password is required";
-    isValid = false;
-  } else if (userData.password.length < 8) {
-    errors.password = "Password length should be 8";
-    isValid = false;
-  } else if (
-    !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}/.test(
-      userData.password
-    )
-  ) {
-    errors.password =
-      "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special symbol";
-    isValid = false;
-  }
-
-  if (!userData.confirmPassword.trim()) {
-    errors.confirmPassword = "Confirm password is required";
-    isValid = false;
-  } else if (userData.password !== userData.confirmPassword) {
-    errors.confirmPassword = "Passwords do not match";
-    isValid = false;
-  }
-
-  if (!userData.picture) {
-    errors.picture = "Picture is required";
-    isValid = false;
+  for (const key in errors) {
+    if (errors[key]) {
+      isValid = false;
+      break;
+    }
   }
   return { isValid, errors };
 };

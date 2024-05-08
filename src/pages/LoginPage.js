@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { ActivityIndicator } from "react-native";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { validateForm } from "../utils/validationCheck";
 import { userLogin } from "../redux/reducer/authReducer";
 import ErrorComponent from "../component/ErrorComponent";
@@ -74,7 +75,7 @@ const LoginPage = ({ navigation }) => {
             )}
           </Text>
         </TouchableOpacity>
-        <Text className="text-base text-center">
+        <Text className="text-base text-center mb-3">
           Don't have an account?{" "}
           <Text
             className="text-blue-500"
@@ -83,6 +84,18 @@ const LoginPage = ({ navigation }) => {
             Register
           </Text>
         </Text>
+        <Text className="text-center">----------Or-----------</Text>
+        <View className="flex flex-row justify-center gap-5 mt-1">
+          <TouchableOpacity>
+            <FontAwesome5 name={"facebook"} size={32} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <FontAwesome5 name={"google"} size={32} color="#db4437" />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <FontAwesome5 name={"twitter"} size={32} color="#1da1f2" />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

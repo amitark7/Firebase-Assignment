@@ -17,7 +17,7 @@ import ConfirmationModal from "../component/ConfirmationModal";
 import ErrorComponent from "../component/ErrorComponent";
 import CameraModal from "../component/CameraModal";
 
-const RegisterPage = ({ navigation }) => {
+const UserRegisterPage = ({ navigation }) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -232,4 +232,4 @@ const RegisterPage = ({ navigation }) => {
   );
 };
 
-export default RegisterPage;
+export default UserRegisterPage;

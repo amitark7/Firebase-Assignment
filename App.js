@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { NativeWindStyleSheet } from "nativewind";
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
-import RegisterPage from "./src/pages/RegisterPage";
+import UserRegisterPage from "./src/pages/UserRegisterPage";
 import HomePage from "./src/pages/HomePage";
 import "./src/styles.css";
 
@@ -21,7 +21,7 @@ export default function App() {
             headerShown: false,
           }}
         >
-          <Stack.Screen name="RegisterPage" component={RegisterPage} />
+          <Stack.Screen name="UserRegisterPage" component={UserRegisterPage} />
           <Stack.Screen name="HomePage" component={HomePage} />
         </Stack.Navigator>
       </NavigationContainer>

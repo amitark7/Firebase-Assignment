@@ -1,9 +1,9 @@
-import RegisterPage from "./src/pages/RegisterPage";
-import { NativeWindStyleSheet } from "nativewind";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
+import { NativeWindStyleSheet } from "nativewind";
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
+import RegisterPage from "./src/pages/RegisterPage";
 import HomePage from "./src/pages/HomePage";
 import "./src/styles.css";
 

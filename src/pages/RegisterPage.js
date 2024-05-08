@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,15 +10,17 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesome5 } from "@expo/vector-icons";
-import CameraModal from "../component/CameraModal";
 import { saveUserData, signupUser } from "../redux/reducer/authReducer";
-import ConfirmationModal from "../component/ConfirmationModal";
-import ErrorComponent from "../component/ErrorComponent";
 import { validateForm } from "../utils/validationCheck";
 import { handleImagePicker } from "../utils/handleImagePicker";
+import ConfirmationModal from "../component/ConfirmationModal";
+import ErrorComponent from "../component/ErrorComponent";
+import CameraModal from "../component/CameraModal";
 
-const SignUpForm = ({ navigation }) => {
+const RegisterPage = ({ navigation }) => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  console.log("-------");
+  const [image, setImage] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -28,6 +30,7 @@ const SignUpForm = ({ navigation }) => {
     confirmPassword: "",
     picture: "",
   });
+  console.log(formData);
   const [errors, setErrors] = useState({
     firstName: "",
     lastName: "",
@@ -42,16 +45,15 @@ const SignUpForm = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
-  const [image, setImage] = useState(null);
 
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: "" });
   };
 
-  const handleImagePick = async () => {
-    const imageURL=await handleImagePicker()
-    setFormData({...formData,picture:imageURL})
+  const handleImageSelect = async () => {
+    const imageURL = await handleImagePicker();
+    setFormData({ ...formData, picture: imageURL });
   };
 
   const handleSignUp = async () => {
@@ -65,7 +67,7 @@ const SignUpForm = ({ navigation }) => {
         return;
       }
       const userUID = userCredential?.payload?.user?.uid;
-      setFormData({...formData,picture:image})
+      setFormData({ ...formData, picture: image });
       if (userUID) {
         await dispatch(saveUserData({ userUID, formData }));
         setShowConfirmationModal(true);
@@ -80,6 +82,11 @@ const SignUpForm = ({ navigation }) => {
     setShowConfirmationModal(false);
   };
 
+  useEffect(() => {
+    if (image) {
+      setFormData({ ...formData, picture: image });
+    }
+  }, [image]);
   return (
     <ScrollView contentContainerStyle={{ justifyContent: "center" }}>
       <View className="flex-1 items-center justify-center mt-20">
@@ -169,7 +176,7 @@ const SignUpForm = ({ navigation }) => {
             <View className="flex flex-row justify-between items-center">
               <TouchableOpacity
                 className="bg-blue-500 rounded-md px-4 py-2 sm:py-3"
-                onPress={handleImagePick}
+                onPress={handleImageSelect}
               >
                 <FontAwesome5
                   name="image"
@@ -219,7 +226,7 @@ const SignUpForm = ({ navigation }) => {
             />
           )}
           {showCamera && (
-            <CameraModal setShowCamera={setShowCamera} />
+            <CameraModal setShowCamera={setShowCamera} setImage={setImage} />
           )}
         </View>
       </View>
@@ -227,4 +234,4 @@ const SignUpForm = ({ navigation }) => {
   );
 };
 
-export default SignUpForm;
+export default RegisterPage;

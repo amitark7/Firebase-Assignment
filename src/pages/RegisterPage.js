@@ -18,7 +18,6 @@ import ErrorComponent from "../component/ErrorComponent";
 import CameraModal from "../component/CameraModal";
 
 const RegisterPage = ({ navigation }) => {
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -37,12 +36,13 @@ const RegisterPage = ({ navigation }) => {
     confirmPassword: "",
     picture: null,
   });
-  const dispatch = useDispatch();
-  const loading = useSelector((state) => state.auth.loading);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [image, setImage] = useState(null);
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state.auth.loading);
 
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });

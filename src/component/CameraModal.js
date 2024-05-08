@@ -9,10 +9,8 @@ const CameraModal = ({ setShowCamera, setImage }) => {
   const [type, setType] = useState(Camera.Constants.Type.back);
 
   const takePicture = async () => {
-    console.log("-----------", camera);
     if (camera) {
       const data = await camera.takePictureAsync();
-      console.log(data);
       setImage(data.uri);
       setShowCamera(false);
     }

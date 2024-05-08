@@ -5,8 +5,8 @@ import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
 import UserRegisterPage from "./src/pages/UserRegisterPage";
 import HomePage from "./src/pages/HomePage";
-import "./src/styles.css";
 import LoginPage from "./src/pages/LoginPage";
+import "./src/styles.css";
 
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -22,7 +22,7 @@ export default function App() {
             headerShown: false,
           }}
         >
-          <Stack.Screen name="LoginPage" component={LoginPage}/>
+          <Stack.Screen name="LoginPage" component={LoginPage} />
           <Stack.Screen name="UserRegisterPage" component={UserRegisterPage} />
           <Stack.Screen name="HomePage" component={HomePage} />
         </Stack.Navigator>

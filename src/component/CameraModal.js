@@ -28,7 +28,11 @@ const CameraModal = ({ setShowCamera, setImage }) => {
   }
 
   return (
-    <Modal className="flex-1">
+    <Modal
+      visible={hasCameraPermission}
+      animationType={"slide"}
+      className="flex-1"
+    >
       <View className="flex-1">
         <Camera ref={(ref) => setCamera(ref)} className="flex-1" type={type} />
         <View className="flex-row justify-between items-center p-5">

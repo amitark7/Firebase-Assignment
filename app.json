@@ -47,6 +47,12 @@
         "projectId": "368e05a7-01d1-4d47-9124-0e4fc1d6bb9b"
       }
     },
-    "owner": "amitark7"
+    "owner": "amitark7",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/368e05a7-01d1-4d47-9124-0e4fc1d6bb9b"
+    }
   }
 }

@@ -50,7 +50,7 @@ const RegisterPage = ({ navigation }) => {
   };
 
   const handleImageSelect = async () => {
-    const imageURL = await handleImagePicker();
+    const imageURL = (await handleImagePicker()) || null;
     setFormData({ ...formData, picture: imageURL });
   };
 

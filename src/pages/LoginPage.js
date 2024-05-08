@@ -19,7 +19,6 @@ const LoginPage = ({ navigation }) => {
 
   const onLoginSubmit = async () => {
     const { isValid, errors } = validateForm(userData, true);
-    console.log(isValid);
     if (isValid) {
       const result = await dispatch(userLogin(userData));
       if (result.payload?.code === "auth/invalid-credential") {
@@ -45,7 +44,6 @@ const LoginPage = ({ navigation }) => {
             value={userData.email}
             onChangeText={(text) => handleInputChange("email", text)}
           />
-          {/* {errors.email && <Text className="text-red-500">{errors.email}</Text>} */}
           <ErrorComponent errorMessage={errors.email} />
         </View>
         <View className="w-full mb-6">

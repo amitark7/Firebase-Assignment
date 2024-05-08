@@ -14,7 +14,7 @@ export const validateForm = (userData) => {
   if (!userData.phoneNumber.trim()) {
     errors.phoneNumber = "Phone number is required";
     isValid = false;
-  } else if (userData.phoneNumber?.trim().length!== 10) {
+  } else if (userData.phoneNumber?.trim().length !== 10) {
     errors.phoneNumber = "Phone number must be 10 characters long";
     isValid = false;
   }

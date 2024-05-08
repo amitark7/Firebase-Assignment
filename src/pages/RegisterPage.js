@@ -19,8 +19,6 @@ import CameraModal from "../component/CameraModal";
 
 const RegisterPage = ({ navigation }) => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  console.log("-------");
-  const [image, setImage] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -30,7 +28,6 @@ const RegisterPage = ({ navigation }) => {
     confirmPassword: "",
     picture: "",
   });
-  console.log(formData);
   const [errors, setErrors] = useState({
     firstName: "",
     lastName: "",
@@ -45,6 +42,7 @@ const RegisterPage = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [image, setImage] = useState(null);
 
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
@@ -67,7 +65,6 @@ const RegisterPage = ({ navigation }) => {
         return;
       }
       const userUID = userCredential?.payload?.user?.uid;
-      setFormData({ ...formData, picture: image });
       if (userUID) {
         await dispatch(saveUserData({ userUID, formData }));
         setShowConfirmationModal(true);
@@ -87,6 +84,7 @@ const RegisterPage = ({ navigation }) => {
       setFormData({ ...formData, picture: image });
     }
   }, [image]);
+
   return (
     <ScrollView contentContainerStyle={{ justifyContent: "center" }}>
       <View className="flex-1 items-center justify-center mt-20">

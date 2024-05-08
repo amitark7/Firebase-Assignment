@@ -107,7 +107,6 @@ const UserRegisterPage = ({ navigation }) => {
               placeholder="Last Name"
               value={formData.lastName}
               onChangeText={(value) => handleChange("lastName", value)}
-              autoCapitalize="none"
             />
             <ErrorComponent errorMessage={errors.lastName} />
           </View>
@@ -129,7 +128,6 @@ const UserRegisterPage = ({ navigation }) => {
               keyboardType="phone-pad"
               value={formData.phoneNumber}
               onChangeText={(value) => handleChange("phoneNumber", value)}
-              autoCapitalize="none"
             />
             <ErrorComponent errorMessage={errors.phoneNumber} />
           </View>

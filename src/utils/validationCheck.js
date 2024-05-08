@@ -1,19 +1,13 @@
-let isValid = true;
 const errors = {};
 
-const validateEmail = (email = null) => {
-  if (!email.trim()) {
-    errors.email = "Email is required";
-    isValid = false;
-  } else if (!/\S+@\S+\.\S+/.test(email)) {
-    errors.email = "Email is invalid";
-    isValid = false;
+const validateEmail = (email) => {
+  if (!/\S+@\S+\.\S+/.test(email)) {
+    return "Email is invalid";
   }
 };
 
 const validateField = (field, data = null) => {
   if (!data.trim()) {
-    isValid = false;
     return `${field} is required`;
   }
 };
@@ -23,13 +17,11 @@ const validatePassword = (password) => {
   if (!errors.password) {
     if (password.length < 8) {
       errors.password = "Password length should be 8";
-      isValid = false;
     } else if (
       !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}/.test(password)
     ) {
       errors.password =
         "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special symbol";
-      isValid = false;
     }
   }
 };
@@ -46,7 +38,11 @@ const validatePhoneNumber = (phoneNumber, length) => {
 };
 
 export const validateForm = (userData, isLogin = false) => {
-  validateEmail(userData?.email);
+  let isValid = true;
+  errors.email = validateField("Email", userData?.email);
+  if (!errors.email) {
+    errors.email = validateEmail(userData?.email);
+  }
   isLogin
     ? (errors.password = validateField("Password", userData?.password))
     : validatePassword(userData?.password);
@@ -68,6 +64,13 @@ export const validateForm = (userData, isLogin = false) => {
     errors.phoneNumber = validateField("Phone Number", userData?.phoneNumber);
     if (!errors.phoneNumber) {
       errors.phoneNumber = validatePhoneNumber(userData?.phoneNumber, 10);
+    }
+  }
+
+  for (const key in errors) {
+    if (errors[key]) {
+      isValid = false;
+      break;
     }
   }
   return { isValid, errors };

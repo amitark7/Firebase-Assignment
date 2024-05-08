@@ -19,6 +19,7 @@ const LoginPage = ({ navigation }) => {
 
   const onLoginSubmit = async () => {
     const { isValid, errors } = validateForm(userData, true);
+    console.log(isValid);
     if (isValid) {
       const result = await dispatch(userLogin(userData));
       if (result.payload?.code === "auth/invalid-credential") {

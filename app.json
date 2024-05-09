@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.amitark7.firebase"
@@ -27,7 +25,8 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.amitark7.firebase"
+      "package": "com.amitark7.firebase",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -40,7 +39,16 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
-      ]
+      ],
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "762286806030726",
+          "clientToken": "51844463b2e56ddef8f740eda4e08533",
+          "displayName": "Expo Auth"
+        }
+      ],
+      ["@react-native-google-signin/google-signin"]
     ],
     "extra": {
       "eas": {

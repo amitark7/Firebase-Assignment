@@ -8,7 +8,7 @@
         "buildType": "apk"
       }
     },
-    "preview2": {
+    "development": {
       "android": {
         "gradleCommand": ":app:assembleRelease"
       }

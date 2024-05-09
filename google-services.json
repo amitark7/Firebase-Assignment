@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "190676815337",
+    "project_id": "fir-expo-13336",
+    "storage_bucket": "fir-expo-13336.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190676815337:android:876c57c20aaebb203d8f78",
+        "android_client_info": {
+          "package_name": "com.amitark7.firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190676815337-rv4r3koe9prsrabsk75mj65lquefijc5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.amitark7.firebase",
+            "certificate_hash": "e16286374c126b571e9464146ebb41e2620dc937"
+          }
+        },
+        {
+          "client_id": "190676815337-kkkuhlkq95u98pf0ala29a7d5p22oqpr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoYoroHCEVBwLCa-6xOCRloFVd9vRDTkw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190676815337-kkkuhlkq95u98pf0ala29a7d5p22oqpr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

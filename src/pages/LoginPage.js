@@ -1,13 +1,30 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
+import { LoginManager, AccessToken } from "react-native-fbsdk-next";
+// import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { NativeModules } from "react-native";
+import { FacebookAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  auth,
+  fbProvider,
+  googleProvider,
+  twiiterProvider,
+} from "../firebase/firebaseConfig";
 import { useSelector, useDispatch } from "react-redux";
 import { ActivityIndicator } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { validateForm } from "../utils/validationCheck";
-import { userLogin } from "../redux/reducer/authReducer";
+import { saveSocialAuthData, userLogin } from "../redux/reducer/authReducer";
 import ErrorComponent from "../component/ErrorComponent";
 
 const LoginPage = ({ navigation }) => {
+  const { RNTwitterSignIn } = NativeModules;
   const [userData, setUserData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const { loading } = useSelector((state) => state.auth);
@@ -29,6 +46,81 @@ const LoginPage = ({ navigation }) => {
       }
     } else {
       setErrors(errors);
+    }
+  };
+
+  const onSocialClick = async (provider) => {
+    try {
+      if (Platform.OS === "web") {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        const userSocialData = {
+          userUID: user.uid,
+          firstName: user.displayName.split(" ")[0],
+          lastName: user.displayName.split(" ")[1],
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          pictureUrl: user.photoURL,
+        };
+        try {
+          await dispatch(saveSocialAuthData(userSocialData));
+          navigation.navigate("HomePage");
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        if (provider === fbProvider) {
+          const result = await LoginManager.logInWithPermissions([
+            "public_profile",
+            "email",
+          ]);
+          if (result.isCancelled) {
+            console.log("User cancelled");
+            return;
+          }
+          const accessToken = await AccessToken.getCurrentAccessToken();
+          if (!accessToken) {
+            console.log("Something went wrong obtaining the access token");
+            return;
+          }
+          const credential = FacebookAuthProvider.credential(accessToken.token);
+          const firebaseUserCredential = await auth.signInWithCredential(
+            credential
+          );
+          console.log(firebaseUserCredential.user);
+        } else if (provider === googleProvider) {
+          // if (Platform.OS === "android") {
+          //   GoogleSignin.configure({
+          //     webClientId:
+          //       "190676815337-kkkuhlkq95u98pf0ala29a7d5p22oqpr.apps.googleusercontent.com",
+          //   });
+          // }
+          // await GoogleSignin.hasPlayServices({
+          //   showPlayServicesUpdateDialog: true,
+          // });
+          // const { idToken } = await GoogleSignin.signIn();
+          // console.log(idToken);
+          // const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+          // const userSiginValue = auth().signInWithCredential(googleCredential);
+          // console.log(userSiginValue);
+        } else if (provider === twiiterProvider) {
+          RNTwitterSignIn.init(
+            "eHZmRGZDZ1NvOHZBNnpyRFFURmg6MTpjaQ",
+            "lifiDyrXequAZmaKToXYRBF4ICJzAJDX2NH9uZ_cdjoXTwJX4O"
+          ).then(() => console.log("Twitter SDK initialized"));
+          const { authToken, authTokenSecret } = await RNTwitterSignIn.logIn();
+
+          const twitterCredential = auth.TwitterAuthProvider.credential(
+            authToken,
+            authTokenSecret
+          );
+
+          const userSignIn = auth().signInWithCredential(twitterCredential);
+          console.log(userSignIn);
+        }
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -86,13 +178,13 @@ const LoginPage = ({ navigation }) => {
         </Text>
         <Text className="text-center">----------Or-----------</Text>
         <View className="flex flex-row justify-center gap-5 mt-1">
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => onSocialClick(fbProvider)}>
             <FontAwesome5 name={"facebook"} size={32} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => onSocialClick(googleProvider)}>
             <FontAwesome5 name={"google"} size={32} color="#db4437" />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => onSocialClick(twiiterProvider)}>
             <FontAwesome5 name={"twitter"} size={32} color="#1da1f2" />
           </TouchableOpacity>
         </View>

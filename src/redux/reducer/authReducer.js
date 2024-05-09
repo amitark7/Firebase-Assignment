@@ -46,29 +46,28 @@ export const saveUserData = createAsyncThunk(
     }
   }
 );
-export const saveSocialAuthData = createAsyncThunk("auth/socialAuthData", async (data) => {
-  try {
-    const imageRef = ref(imageStorage, "images/" + Date.now());
-    let imageURL = null;
-    if (data.formData.picture) {
-      await uploadBytes(imageRef, data.formData.picture);
-      imageURL = await getDownloadURL(imageRef);
+
+export const saveSocialAuthData = createAsyncThunk(
+  "auth/socialAuthData",
+  async (data) => {
+    try {
+      const userData = {
+        firstName: data?.firstName,
+        lastName: data?.lastName,
+        phoneNumber: data?.phoneNumber || null,
+        picture: data?.pictureUrl,
+        email: data?.email,
+        uid: data.userUID,
+      };
+
+      const response = await addDoc(collection(db, "users"), userData);
+      console.log(response);
+      return response;
+    } catch (error) {
+      return error;
     }
-
-    const userData = {
-      firstName: data?.formData.firstName,
-      lastName: data?.formData.lastName,
-      phoneNumber: data?.formData.phoneNumber,
-      picture: imageURL,
-      email: data?.formData.email,
-      uid: data.userUID,
-    };
-
-    await addDoc(collection(db, "users"), userData);
-  } catch (error) {
-    return error.response;
   }
-})
+);
 export const userLogin = createAsyncThunk("auth/userLogin", async (data) => {
   try {
     const response = await signInWithEmailAndPassword(

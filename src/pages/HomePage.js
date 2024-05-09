@@ -11,5 +11,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-const styles = StyleSheet.create({});

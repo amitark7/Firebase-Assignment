@@ -13,8 +13,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.amitark7.firebase"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
@@ -25,8 +24,8 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.amitark7.firebase",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "package": "com.amitark7.firebase"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -40,6 +39,7 @@
           "recordAudioAndroid": true
         }
       ],
+      ["@react-native-google-signin/google-signin"],
       [
         "react-native-fbsdk-next",
         {
@@ -47,8 +47,7 @@
           "clientToken": "51844463b2e56ddef8f740eda4e08533",
           "displayName": "Expo Auth"
         }
-      ],
-      ["@react-native-google-signin/google-signin"]
+      ]
     ],
     "extra": {
       "eas": {

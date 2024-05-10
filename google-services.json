@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "190676815337-lee33qaog51pk6uonb4h6jkppe286qs9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.amitark7.firebase",
+            "certificate_hash": "2d373b0bd9568e5aa0b24df27e5a10fe20ac1480"
+          }
+        },
+        {
           "client_id": "190676815337-rv4r3koe9prsrabsk75mj65lquefijc5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

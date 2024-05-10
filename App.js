@@ -1,15 +1,15 @@
+import 'expo-dev-client'
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
+import { useEffect, useState } from "react";
 import { NativeWindStyleSheet } from "nativewind";
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
 import UserRegisterPage from "./src/pages/UserRegisterPage";
 import HomePage from "./src/pages/HomePage";
 import LoginPage from "./src/pages/LoginPage";
-import "./src/styles.css";
-import { useEffect, useState } from "react";
-import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "./src/firebase/firebaseConfig";
+import "./src/styles.css";
 
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -19,7 +19,7 @@ export default function App() {
   const Stack = createNativeStackNavigator();
   const [user, setUser] = useState(null);
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    auth.onAuthStateChanged((user) => {
       setUser(user);
     });
   }, [user]);

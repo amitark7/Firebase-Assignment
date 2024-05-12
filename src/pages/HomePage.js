@@ -4,8 +4,8 @@ import { auth } from "../firebase/firebaseConfig";
 import { TouchableOpacity } from "react-native";
 
 const HomePage = ({navigation}) => {
-  const logout=()=>{
-    auth.signOut()
+  const logout=async ()=>{
+    await auth.signOut()
     navigation.replace("LoginPage")
   }
   return (

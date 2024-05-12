@@ -24,7 +24,7 @@ export default function App() {
     });
     return () => unsubscribe
   }, [user]);
-  console.log(user);
+
   return (
     <Provider store={store}>
       <NavigationContainer>

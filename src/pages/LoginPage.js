@@ -14,22 +14,21 @@ import {
   twiiterProvider,
 } from "../firebase/firebaseConfig";
 // import auth from "@react-native-firebase/auth";
+// import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { AccessToken, LoginManager } from "react-native-fbsdk-next";
+import RNTwitterSignIn from "@react-native-twitter-signin/twitter-signin";
 import { useSelector, useDispatch } from "react-redux";
 import { ActivityIndicator } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { validateForm } from "../utils/validationCheck";
 import { saveSocialAuthData, userLogin } from "../redux/reducer/authReducer";
 import ErrorComponent from "../component/ErrorComponent";
-// import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import { AccessToken, LoginManager } from "react-native-fbsdk-next";
-import RNTwitterSignIn from "@react-native-twitter-signin/twitter-signin";
 
 const LoginPage = ({ navigation }) => {
   const [userData, setUserData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const { loading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
   const handleInputChange = (name, value) => {
     setUserData({ ...userData, [name]: value });
     setErrors({ ...errors, [name]: "" });
@@ -39,7 +38,7 @@ const LoginPage = ({ navigation }) => {
     const { isValid, errors } = validateForm(userData, true);
     if (isValid) {
       const result = await dispatch(userLogin(userData));
-      if (result.payload?.code === "auth/invalid-credential") {
+      if (result.payload?.code === "auth/invalid-credential" || result.payload?.code === "auth/invalid-email") {
         setErrors({ ...errors, authError: "Email or Password is incorrect" });
       } else {
         navigation.replace("HomePage");
@@ -135,9 +134,8 @@ const LoginPage = ({ navigation }) => {
         <Text className="text-3xl font-semibold mb-6 text-center">Login</Text>
         <View className="w-full mb-6">
           <TextInput
-            className={`w-full rounded-md py-3 pl-2 outline-none border-2 ${
-              errors.email ? "border-red-500" : "border-gray-300"
-            }`}
+            className={`w-full rounded-md py-3 pl-2 outline-none border-2 ${errors.email ? "border-red-500" : "border-gray-300"
+              }`}
             placeholder="Email ID"
             value={userData.email}
             onChangeText={(text) => handleInputChange("email", text)}
@@ -146,9 +144,8 @@ const LoginPage = ({ navigation }) => {
         </View>
         <View className="w-full mb-6">
           <TextInput
-            className={`w-full rounded-md py-3 pl-2 outline-none border-2 ${
-              errors.password ? "border-red-500" : "border-gray-300"
-            }`}
+            className={`w-full rounded-md py-3 pl-2 outline-none border-2 ${errors.password ? "border-red-500" : "border-gray-300"
+              }`}
             placeholder="Password"
             secureTextEntry={true}
             value={userData.password}
@@ -158,9 +155,8 @@ const LoginPage = ({ navigation }) => {
           <ErrorComponent errorMessage={errors.authError} />
         </View>
         <TouchableOpacity
-          className={`w-full ${
-            loading ? "bg-gray-400" : "bg-blue-500"
-          } py-2 text-xl rounded-md mb-4 font-semibold`}
+          className={`w-full ${loading ? "bg-gray-400" : "bg-blue-500"
+            } py-2 text-xl rounded-md mb-4 font-semibold`}
           onPress={onLoginSubmit}
           disabled={loading}
         >

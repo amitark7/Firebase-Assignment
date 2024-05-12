@@ -61,7 +61,6 @@ export const saveSocialAuthData = createAsyncThunk(
       };
 
       const response = await addDoc(collection(db, "users"), userData);
-      console.log(response);
       return response;
     } catch (error) {
       return error;

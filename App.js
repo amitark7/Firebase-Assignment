@@ -19,11 +19,12 @@ export default function App() {
   const Stack = createNativeStackNavigator();
   const [user, setUser] = useState(null);
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
     });
+    return () => unsubscribe
   }, [user]);
-
+  console.log(user);
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -32,17 +33,17 @@ export default function App() {
             headerShown: false,
           }}
         >
-          {user ? (
-            <Stack.Screen name="HomePage" component={HomePage} />
-          ) : (
-            <>
-              <Stack.Screen name="LoginPage" component={LoginPage} />
-              <Stack.Screen
-                name="UserRegisterPage"
-                component={UserRegisterPage}
-              />
-            </>
-          )}
+          {
+            user ?
+              <Stack.Screen name="HomePage" component={HomePage} /> :
+              <>
+                <Stack.Screen name="LoginPage" component={LoginPage} />
+                <Stack.Screen
+                  name="UserRegisterPage"
+                  component={UserRegisterPage}
+                />
+              </>
+          }
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

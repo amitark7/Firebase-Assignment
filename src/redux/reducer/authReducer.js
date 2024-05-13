@@ -75,14 +75,13 @@ export const userLogin = createAsyncThunk("auth/userLogin", async (data) => {
 export const getLoggedInUser = createAsyncThunk("auth/getUser", async () => {
   try {
      onAuthStateChanged((user)=>{
-      console.log(user);
       return user;
     })
   } catch (error) {
-    console.log(error);
     return error
   }
 });
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {

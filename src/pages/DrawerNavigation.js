@@ -4,6 +4,7 @@ import UpdateUserDetails from "./UpdateUserDetails";
 import AllPostPage from "./AllPostPage";
 import AddPost from "./AddPost";
 import { FontAwesome5 } from "@expo/vector-icons";
+import UserRegisterPage from "./UserRegisterPage";
 
 const DrawerNavigation = () => {
   const Drawer = createDrawerNavigator();
@@ -21,7 +22,7 @@ const DrawerNavigation = () => {
     />
     <Drawer.Screen 
       name="UpdateUserDetails" 
-      component={UpdateUserDetails} 
+      component={UserRegisterPage} 
       options={{
         drawerLabel: 'Update User',
         drawerIcon: ({ color, size }) => (

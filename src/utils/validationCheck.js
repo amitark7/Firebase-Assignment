@@ -7,7 +7,7 @@ const validateEmail = (email) => {
 };
 
 const validateField = (field, data = null) => {
-  if (data?.trim() === "") {
+  if (data && data?.trim() === "") {
     return `${field} is required`;
   }
 };
@@ -15,7 +15,7 @@ const validateField = (field, data = null) => {
 const validatePassword = (password) => {
   errors.password = validateField("Password", password);
   if (!errors.password) {
-    if (password?.length < 8) {
+    if (password && password?.length < 8) {
       errors.password = "Password length should be 8";
     }
     if (password && !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}/.test(password)) {

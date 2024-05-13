@@ -1,9 +1,23 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
+import { signInWithPopup } from "firebase/auth";
+import {
+  auth,
+  fbProvider,
+  googleProvider,
+  twiiterProvider,
+} from "../firebase/firebaseConfig";
 import { useSelector, useDispatch } from "react-redux";
 import { ActivityIndicator } from "react-native";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { validateForm } from "../utils/validationCheck";
-import { userLogin } from "../redux/reducer/authReducer";
+import { saveSocialAuthData, userLogin } from "../redux/reducer/authReducer";
 import ErrorComponent from "../component/ErrorComponent";
 
 const LoginPage = ({ navigation }) => {
@@ -11,7 +25,6 @@ const LoginPage = ({ navigation }) => {
   const [errors, setErrors] = useState({});
   const { loading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
   const handleInputChange = (name, value) => {
     setUserData({ ...userData, [name]: value });
     setErrors({ ...errors, [name]: "" });
@@ -21,13 +34,40 @@ const LoginPage = ({ navigation }) => {
     const { isValid, errors } = validateForm(userData, true);
     if (isValid) {
       const result = await dispatch(userLogin(userData));
-      if (result.payload?.code === "auth/invalid-credential") {
+      if (
+        result.payload?.code === "auth/invalid-credential" ||
+        result.payload?.code === "auth/invalid-email"
+      ) {
         setErrors({ ...errors, authError: "Email or Password is incorrect" });
       } else {
         navigation.replace("HomePage");
       }
     } else {
       setErrors(errors);
+    }
+  };
+
+  const onSocialClick = async (provider) => {
+    try {
+      if (Platform.OS === "web") {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log(user);
+        const userSocialData = {
+          uid: user?.uid,
+          firstName: user?.displayName.split(" ")[0],
+          lastName: user?.displayName.split(" ")[1],
+          email: user?.email,
+          phoneNumber: user?.phoneNumber,
+          picture: user?.photoURL,
+        };
+        console.log(userSocialData);
+
+        await dispatch(saveSocialAuthData(userSocialData));
+        navigation.navigate("HomePage");
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -74,7 +114,7 @@ const LoginPage = ({ navigation }) => {
             )}
           </Text>
         </TouchableOpacity>
-        <Text className="text-base text-center">
+        <Text className="text-base text-center mb-3">
           Don't have an account?{" "}
           <Text
             className="text-blue-500"
@@ -83,6 +123,18 @@ const LoginPage = ({ navigation }) => {
             Register
           </Text>
         </Text>
+        <Text className="text-center">----------Or-----------</Text>
+        <View className="flex flex-row justify-center gap-5 mt-1">
+          <TouchableOpacity onPress={() => onSocialClick(fbProvider)}>
+            <FontAwesome5 name={"facebook"} size={32} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => onSocialClick(googleProvider)}>
+            <FontAwesome5 name={"google"} size={32} color="#db4437" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => onSocialClick(twiiterProvider)}>
+            <FontAwesome5 name={"twitter"} size={32} color="#1da1f2" />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

@@ -24,7 +24,6 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ],
-      "googleServicesFile": "./google-services.json",
       "package": "com.amitark7.firebase"
     },
     "web": {

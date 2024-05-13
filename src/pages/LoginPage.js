@@ -52,14 +52,16 @@ const LoginPage = ({ navigation }) => {
       if (Platform.OS === "web") {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
+        console.log(user);
         const userSocialData = {
-          userUID: user.uid,
-          firstName: user.displayName.split(" ")[0],
-          lastName: user.displayName.split(" ")[1],
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          pictureUrl: user.photoURL,
+          uid: user?.uid,
+          firstName: user?.displayName.split(" ")[0],
+          lastName: user?.displayName.split(" ")[1],
+          email: user?.email,
+          phoneNumber: user?.phoneNumber,
+          picture: user?.photoURL,
         };
+        console.log(userSocialData);
 
         await dispatch(saveSocialAuthData(userSocialData));
         navigation.navigate("HomePage");

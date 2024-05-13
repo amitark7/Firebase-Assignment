@@ -18,6 +18,7 @@ NativeWindStyleSheet.setOutput({
 export default function App() {
   const Stack = createNativeStackNavigator();
   const [user, setUser] = useState(null);
+  
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);

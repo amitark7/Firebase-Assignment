@@ -3,14 +3,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { NativeWindStyleSheet } from "nativewind";
+import { StatusBar } from 'react-native';
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
 import UserRegisterPage from "./src/pages/UserRegisterPage";
-import HomePage from "./src/pages/HomePage";
 import LoginPage from "./src/pages/LoginPage";
 import { auth } from "./src/firebase/firebaseConfig";
+import DrawerNavigation from './src/pages/DrawerNavigation';
 import "./src/styles.css";
-import { StatusBar } from 'react-native';
 
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -38,7 +38,7 @@ export default function App() {
         >
           {
             user ?
-              <Stack.Screen name="HomePage" component={HomePage} /> :
+              <Stack.Screen name="HomePage" component={DrawerNavigation} /> :
               <>
                 <Stack.Screen name="LoginPage" component={LoginPage} />
                 <Stack.Screen

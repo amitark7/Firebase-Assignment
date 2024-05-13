@@ -36,6 +36,7 @@ const UserRegisterPage = ({ navigation }) => {
     confirmPassword: "",
     picture: null,
   });
+
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);

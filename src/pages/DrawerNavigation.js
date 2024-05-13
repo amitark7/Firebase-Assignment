@@ -5,7 +5,7 @@ import AllPostPage from "./AllPostPage";
 import AddPost from "./AddPost";
 import { FontAwesome5 } from "@expo/vector-icons";
 
-const HomePage = () => {
+const DrawerNavigation = () => {
   const Drawer = createDrawerNavigator();
   return (
     <Drawer.Navigator>
@@ -43,4 +43,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default DrawerNavigation;

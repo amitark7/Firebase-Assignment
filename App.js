@@ -1,4 +1,4 @@
-import 'expo-dev-client'
+import 'react-native-gesture-handler';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import HomePage from "./src/pages/HomePage";
 import LoginPage from "./src/pages/LoginPage";
 import { auth } from "./src/firebase/firebaseConfig";
 import "./src/styles.css";
+import { StatusBar } from 'react-native';
 
 NativeWindStyleSheet.setOutput({
   default: "native",
@@ -28,6 +29,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
+      <StatusBar/>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{

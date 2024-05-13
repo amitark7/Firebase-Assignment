@@ -7,7 +7,7 @@ const validateEmail = (email) => {
 };
 
 const validateField = (field, data = null) => {
-  if (!data.trim()) {
+  if (data?.trim() === "") {
     return `${field} is required`;
   }
 };
@@ -15,11 +15,10 @@ const validateField = (field, data = null) => {
 const validatePassword = (password) => {
   errors.password = validateField("Password", password);
   if (!errors.password) {
-    if (password.length < 8) {
+    if (password?.length < 8) {
       errors.password = "Password length should be 8";
-    } else if (
-      !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}/.test(password)
-    ) {
+    }
+    if (password && !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}/.test(password)) {
       errors.password =
         "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special symbol";
     }
@@ -48,8 +47,8 @@ export const validateForm = (userData, isLogin = false) => {
     : validatePassword(userData?.password);
 
   if (!isLogin) {
-    errors.firstName = validateField("Last name", userData?.firstName);
-    errors.lastName = validateField("First Name", userData?.lastName);
+    errors.firstName = validateField("First name", userData?.firstName);
+    errors.lastName = validateField("Last Name", userData?.lastName);
     errors.picture = validateField("Picture", userData?.picture);
     errors.confirmPassword = validateField(
       "Confim Password",

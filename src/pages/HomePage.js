@@ -1,21 +1,20 @@
-import { ScrollView, StatusBar, Text } from "react-native";
+import { SafeAreaView, ScrollView, StatusBar, Text } from "react-native";
 import React from "react";
 import { auth } from "../firebase/firebaseConfig";
 import { TouchableOpacity } from "react-native";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import UpdateUserDetails from "./UpdateUserDetails";
+import AllPostPage from "./AllPostPage";
+import AddPost from "./AddPost";
 
-const HomePage = ({navigation}) => {
-  const logout=async ()=>{
-    await auth.signOut()
-    navigation.replace("LoginPage")
-  }
+const HomePage = () => {
+  const Drawer = createDrawerNavigator();
   return (
-    <ScrollView>
-      <StatusBar />
-      <Text>This is Home Page</Text>
-      <TouchableOpacity onPress={logout} className="p-3 w-[100px] mx-auto bg-red-400 rounded-lg">
-        <Text className="text-center">Logout</Text>
-      </TouchableOpacity>
-    </ScrollView>
+    <Drawer.Navigator>
+      <Drawer.Screen name="AllPostPage" component={AllPostPage} />
+      <Drawer.Screen name="UpdateUserDetails" component={UpdateUserDetails} />
+      <Drawer.Screen name="AddPost" component={AddPost} />
+    </Drawer.Navigator>
   );
 };
 

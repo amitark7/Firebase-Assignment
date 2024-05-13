@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   createUserWithEmailAndPassword,
-  onAuthStateChanged,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -25,12 +24,11 @@ export const saveUserData = createAsyncThunk(
   "auth/saveUserData",
   async (data) => {
     try {
+      const response = await fetch(data.formData.picture);
+      const blob = await response.blob();
       const imageRef = ref(imageStorage, "images/" + Date.now());
-      let imageURL = null;
-      if (data.formData.picture) {
-        await uploadBytes(imageRef, data.formData.picture);
-        imageURL = await getDownloadURL(imageRef);
-      }
+      await uploadBytes(imageRef, blob);
+      const imageURL = await getDownloadURL(imageRef);
 
       const userData = {
         firstName: data?.formData.firstName,
@@ -72,15 +70,22 @@ export const userLogin = createAsyncThunk("auth/userLogin", async (data) => {
   }
 });
 
-export const getLoggedInUser = createAsyncThunk("auth/getUser", async () => {
-  try {
-     onAuthStateChanged((user)=>{
-      return user;
-    })
-  } catch (error) {
-    return error
-  }
+export const getUserData = createAsyncThunk("auth/getData", async (data) => {
+  return data;
 });
+
+export const getLoggedInUser = createAsyncThunk(
+  "auth/getUser",
+  async (_, { dispatch }) => {
+    try {
+      auth.onAuthStateChanged((user) => {
+        dispatch(getUserData(user));
+      });
+    } catch (error) {
+      return error;
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
@@ -119,9 +124,9 @@ const authSlice = createSlice({
       .addCase(userLogin.rejected, (state) => {
         state.loading = false;
       })
-      .addCase(getLoggedInUser.fulfilled,(state,action)=>{
-        state.user=action.payload
-      })
+      .addCase(getUserData.fulfilled, (state, action) => {
+        state.user = action.payload;
+      });
   },
 });
 

@@ -11,8 +11,8 @@ const AllPostPage = ({ navigation }) => {
   return (
     <View>
       <Text>This is All Post Page</Text>
-      <TouchableOpacity onPress={logout} className="p-2 bg-blue-300">
-        <Text>Logout</Text>
+      <TouchableOpacity onPress={logout} className="p-2 bg-blue-300 w-[120px] rounded-lg mt-2 mx-auto">
+        <Text className="text-center text-white">Logout</Text>
       </TouchableOpacity>
     </View>
   );

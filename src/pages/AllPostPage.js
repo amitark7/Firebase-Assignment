@@ -6,10 +6,10 @@ import { useDispatch } from "react-redux";
 import { resetUserDetails } from "../redux/reducer/userDetailsReducer";
 
 const AllPostPage = ({ navigation }) => {
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   const logout = async () => {
     await auth.signOut();
-    dispatch(resetUserDetails())
+    dispatch(resetUserDetails());
     navigation.replace("LoginPage");
   };
   return (

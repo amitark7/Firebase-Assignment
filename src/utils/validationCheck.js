@@ -41,6 +41,7 @@ const validatePhoneNumber = (phoneNumber, length) => {
 
 export const validateForm = (userData, isLogin = false, isUpdate = false) => {
   let isValid = true;
+  
   errors.email = validateField("Email", userData?.email);
   if (!errors.email) {
     errors.email = validateEmail(userData?.email);

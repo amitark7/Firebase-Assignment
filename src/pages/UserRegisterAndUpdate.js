@@ -73,7 +73,6 @@ const UserRegisterAndUpdate = ({ navigation }) => {
       false,
       user ? true : false
     );
-    console.log(isValid, errors);
     if (isValid) {
       if (user) {
         await dispatch(

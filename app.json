@@ -37,15 +37,6 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
-      ],
-      ["@react-native-google-signin/google-signin"],
-      [
-        "react-native-fbsdk-next",
-        {
-          "appID": "762286806030726",
-          "clientToken": "51844463b2e56ddef8f740eda4e08533",
-          "displayName": "Expo Auth"
-        }
       ]
     ],
     "extra": {

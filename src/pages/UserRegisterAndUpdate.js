@@ -10,14 +10,15 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { handleImagePicker } from "../utils/handleImagePicker";
 import { saveUserData, signupUser } from "../redux/reducer/authReducer";
 import { validateForm } from "../utils/validationCheck";
-import { handleImagePicker } from "../utils/handleImagePicker";
 import ConfirmationModal from "../component/ConfirmationModal";
 import ErrorComponent from "../component/ErrorComponent";
 import CameraModal from "../component/CameraModal";
+import { updateUserDetails } from "../redux/reducer/userDetailsReducer";
 
-const UserRegisterPage = ({ navigation }) => {
+const UserRegisterAndUpdate = ({ navigation }) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -27,6 +28,7 @@ const UserRegisterPage = ({ navigation }) => {
     confirmPassword: "",
     picture: "",
   });
+
   const [errors, setErrors] = useState({
     firstName: "",
     lastName: "",
@@ -36,13 +38,15 @@ const UserRegisterPage = ({ navigation }) => {
     confirmPassword: "",
     picture: null,
   });
+
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
-  const loading = useSelector((state) => state.auth.loading);
+  const { user, loading } = useSelector((state) => state.auth);
+  const { userDetails, isLoading } = useSelector((state) => state.userDetails);
 
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
@@ -54,20 +58,31 @@ const UserRegisterPage = ({ navigation }) => {
     setFormData({ ...formData, picture: imageURL });
   };
 
-  const handleSignUp = async () => {
-    const { isValid, errors } = validateForm(formData);
+  const onSubmit = async () => {
+    const { isValid, errors } = validateForm(
+      formData,
+      false,
+      user ? true : false
+    );
     if (isValid) {
-      const userCredential = await dispatch(
-        signupUser({ email: formData.email, password: formData.password })
-      );
-      if (userCredential?.payload?.code) {
-        setErrors({ ...errors, email: "Email already registered" });
-        return;
-      }
-      const userUID = userCredential?.payload?.user?.uid;
-      if (userUID) {
-        await dispatch(saveUserData({ userUID, formData }));
+      if (user) {
+        await dispatch(
+          updateUserDetails({ data: formData, id: userDetails.id })
+        );
         setShowConfirmationModal(true);
+      } else {
+        const userCredential = await dispatch(
+          signupUser({ email: formData.email, password: formData.password })
+        );
+        if (userCredential?.payload?.code) {
+          setErrors({ ...errors, email: "Email already registered" });
+          return;
+        }
+        const userUID = userCredential?.payload?.user?.uid;
+        if (userUID) {
+          await dispatch(saveUserData({ userUID, formData }));
+          setShowConfirmationModal(true);
+        }
       }
     } else {
       setErrors(errors);
@@ -75,9 +90,26 @@ const UserRegisterPage = ({ navigation }) => {
   };
 
   const handleNavigate = () => {
-    navigation.replace("HomePage");
+    if (!userDetails.id) {
+      navigation.replace("HomePage");
+    } else {
+      navigation.navigate("AllPostPage");
+    }
     setShowConfirmationModal(false);
   };
+
+  useEffect(() => {
+    if (userDetails.id) {
+      setFormData({
+        ...formData,
+        lastName: userDetails?.lastName,
+        firstName: userDetails?.firstName,
+        email: userDetails?.email,
+        phoneNumber: userDetails?.phoneNumber,
+        picture: userDetails?.picture,
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (image) {
@@ -86,11 +118,13 @@ const UserRegisterPage = ({ navigation }) => {
   }, [image]);
 
   return (
-    <ScrollView contentContainerStyle={{ justifyContent: "center" }}>
+    <ScrollView>
       <View className="flex-1 items-center justify-center mt-20">
         <View className="w-[90%] sm:w-[50%] lg:w-[35%] 2xl:w-[30%] mx-auto bg-white py-8 px-8 mb-10 rounded-lg shadow-lg">
           <View className="items-center mb-5 sm:mb-8">
-            <Text className="text-3xl font-bold">Signup Form</Text>
+            <Text className="text-3xl font-bold">
+              {userDetails.id ? "User Details" : "Signup"}
+            </Text>
           </View>
           <View className="mb-4">
             <TextInput
@@ -116,6 +150,7 @@ const UserRegisterPage = ({ navigation }) => {
               placeholder="Email"
               keyboardType="email-address"
               value={formData.email}
+              editable={!user ? true : false}
               onChangeText={(value) => handleChange("email", value)}
               autoCapitalize="none"
             />
@@ -131,48 +166,54 @@ const UserRegisterPage = ({ navigation }) => {
             />
             <ErrorComponent errorMessage={errors.phoneNumber} />
           </View>
-          <View className="mb-4">
-            <TextInput
-              className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
-              placeholder="Password"
-              secureTextEntry={!showPassword}
-              value={formData.password}
-              onChangeText={(value) => handleChange("password", value)}
-              autoCapitalize="none"
-            />
-            <ErrorComponent errorMessage={errors.password} />
-            <TouchableOpacity
-              onPress={() => setShowPassword(!showPassword)}
-              className="absolute top-3 right-2"
-            >
-              <FontAwesome5
-                name={showPassword ? "eye-slash" : "eye"}
-                size={18}
-                color="gray"
-              />
-            </TouchableOpacity>
-          </View>
-          <View className="mb-4">
-            <TextInput
-              className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
-              placeholder="Confirm Password"
-              secureTextEntry={!showConfirmPassword}
-              value={formData.confirmPassword}
-              onChangeText={(value) => handleChange("confirmPassword", value)}
-              autoCapitalize="none"
-            />
-            <ErrorComponent errorMessage={errors.confirmPassword} />
-            <TouchableOpacity
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute top-3 right-2"
-            >
-              <FontAwesome5
-                name={showConfirmPassword ? "eye-slash" : "eye"}
-                size={18}
-                color="gray"
-              />
-            </TouchableOpacity>
-          </View>
+          {!userDetails.id && (
+            <>
+              <View className="mb-4">
+                <TextInput
+                  className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
+                  placeholder="Password"
+                  secureTextEntry={!showPassword}
+                  value={formData.password}
+                  onChangeText={(value) => handleChange("password", value)}
+                  autoCapitalize="none"
+                />
+                <ErrorComponent errorMessage={errors.password} />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  className="absolute top-3 right-2"
+                >
+                  <FontAwesome5
+                    name={showPassword ? "eye-slash" : "eye"}
+                    size={18}
+                    color="gray"
+                  />
+                </TouchableOpacity>
+              </View>
+              <View className="mb-4">
+                <TextInput
+                  className="border border-gray-300 rounded-md px-4 py-2 sm:py-3"
+                  placeholder="Confirm Password"
+                  secureTextEntry={!showConfirmPassword}
+                  value={formData.confirmPassword}
+                  onChangeText={(value) =>
+                    handleChange("confirmPassword", value)
+                  }
+                  autoCapitalize="none"
+                />
+                <ErrorComponent errorMessage={errors.confirmPassword} />
+                <TouchableOpacity
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute top-3 right-2"
+                >
+                  <FontAwesome5
+                    name={showConfirmPassword ? "eye-slash" : "eye"}
+                    size={18}
+                    color="gray"
+                  />
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
           <View className="mb-4">
             <View className="flex flex-row justify-between items-center">
               <TouchableOpacity
@@ -203,22 +244,26 @@ const UserRegisterPage = ({ navigation }) => {
           </View>
           <TouchableOpacity
             className={`${
-              loading ? "bg-gray-200" : "bg-green-500"
+              loading || isLoading ? "bg-gray-200" : "bg-green-500"
             } rounded-md px-4 py-2 sm:py-3 text-center`}
-            onPress={handleSignUp}
-            disabled={loading}
+            onPress={onSubmit}
+            disabled={loading || isLoading}
           >
-            {loading ? (
+            {loading || isLoading ? (
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
-              <Text className="text-center text-white">Signup</Text>
+              <Text className="text-center text-white">
+                {userDetails.id ? "Update" : "Signup"}
+              </Text>
             )}
           </TouchableOpacity>
           {showConfirmationModal && (
             <ConfirmationModal
               modalTitle={"Succesfully"}
               modalSubTitle={
-                "User registered succesfully. click ok to HomePage"
+                userDetails.id
+                  ? "User updated successfully"
+                  : "User registered succesfully. click ok to HomePage"
               }
               visible={showConfirmationModal}
               onClose={() => setShowConfirmationModal(false)}
@@ -235,4 +280,4 @@ const UserRegisterPage = ({ navigation }) => {
   );
 };
 
-export default UserRegisterPage;
+export default UserRegisterAndUpdate;

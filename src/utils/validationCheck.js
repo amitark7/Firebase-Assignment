@@ -1,4 +1,4 @@
-const errors = {};
+let errors = {};
 
 const validateEmail = (email) => {
   if (!/\S+@\S+\.\S+/.test(email)) {
@@ -15,9 +15,11 @@ const validateField = (field, data = null) => {
 const validatePassword = (password) => {
   errors.password = validateField("Password", password);
   if (!errors.password) {
-    if (password.length < 8) {
+    if (password && password?.length < 8) {
       errors.password = "Password length should be 8";
-    } else if (
+    }
+    if (
+      password &&
       !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}/.test(password)
     ) {
       errors.password =
@@ -37,24 +39,30 @@ const validatePhoneNumber = (phoneNumber, length) => {
   );
 };
 
-export const validateForm = (userData, isLogin = false) => {
+export const validateForm = (userData, isLogin = false, isUpdate = false) => {
   let isValid = true;
+  errors = {};
   errors.email = validateField("Email", userData?.email);
   if (!errors.email) {
     errors.email = validateEmail(userData?.email);
   }
-  isLogin
-    ? (errors.password = validateField("Password", userData?.password))
-    : validatePassword(userData?.password);
+
+  !isUpdate &&
+    (isLogin
+      ? (errors.password = validateField("Password", userData?.password))
+      : validatePassword(userData?.password));
 
   if (!isLogin) {
-    errors.firstName = validateField("Last name", userData?.firstName);
-    errors.lastName = validateField("First Name", userData?.lastName);
+    errors.firstName = validateField("First name", userData?.firstName);
+    errors.lastName = validateField("Last Name", userData?.lastName);
     errors.picture = validateField("Picture", userData?.picture);
-    errors.confirmPassword = validateField(
-      "Confim Password",
-      userData?.confirmPassword
-    );
+
+    !isUpdate &&
+      (errors.confirmPassword = validateField(
+        "Confim Password",
+        userData?.confirmPassword
+      ));
+
     if (!errors.confirmPassword) {
       errors.confirmPassword = validateConfirmPassword(
         userData?.password,

@@ -7,7 +7,7 @@ const validateEmail = (email) => {
 };
 
 const validateField = (field, data = null) => {
-  if (data && data?.trim() === "") {
+  if (!data.trim()) {
     return `${field} is required`;
   }
 };
@@ -18,7 +18,10 @@ const validatePassword = (password) => {
     if (password && password?.length < 8) {
       errors.password = "Password length should be 8";
     }
-    if (password && !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}/.test(password)) {
+    if (
+      password &&
+      !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}/.test(password)
+    ) {
       errors.password =
         "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special symbol";
     }
@@ -36,24 +39,29 @@ const validatePhoneNumber = (phoneNumber, length) => {
   );
 };
 
-export const validateForm = (userData, isLogin = false) => {
+export const validateForm = (userData, isLogin = false, isUpdate = false) => {
   let isValid = true;
   errors.email = validateField("Email", userData?.email);
   if (!errors.email) {
     errors.email = validateEmail(userData?.email);
   }
-  isLogin
-    ? (errors.password = validateField("Password", userData?.password))
-    : validatePassword(userData?.password);
+
+  !isUpdate &&
+    (isLogin
+      ? (errors.password = validateField("Password", userData?.password))
+      : validatePassword(userData?.password));
 
   if (!isLogin) {
     errors.firstName = validateField("First name", userData?.firstName);
     errors.lastName = validateField("Last Name", userData?.lastName);
     errors.picture = validateField("Picture", userData?.picture);
-    errors.confirmPassword = validateField(
-      "Confim Password",
-      userData?.confirmPassword
-    );
+
+    !isUpdate &&
+      (errors.confirmPassword = validateField(
+        "Confim Password",
+        userData?.confirmPassword
+      ));
+
     if (!errors.confirmPassword) {
       errors.confirmPassword = validateConfirmPassword(
         userData?.password,

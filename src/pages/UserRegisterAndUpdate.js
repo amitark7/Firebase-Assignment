@@ -68,7 +68,12 @@ const UserRegisterAndUpdate = ({ navigation }) => {
   };
 
   const onSubmit = async () => {
-    const { isValid, errors } = validateForm(formData);
+    const { isValid, errors } = validateForm(
+      formData,
+      false,
+      user ? true : false
+    );
+    console.log(isValid, errors);
     if (isValid) {
       if (user) {
         await dispatch(

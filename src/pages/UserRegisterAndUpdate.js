@@ -10,15 +10,22 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { getLoggedInUser, saveUserData, signupUser } from "../redux/reducer/authReducer";
-import { validateForm } from "../utils/validationCheck";
 import { handleImagePicker } from "../utils/handleImagePicker";
+import {
+  getLoggedInUser,
+  saveUserData,
+  signupUser,
+} from "../redux/reducer/authReducer";
+import { validateForm } from "../utils/validationCheck";
 import ConfirmationModal from "../component/ConfirmationModal";
 import ErrorComponent from "../component/ErrorComponent";
 import CameraModal from "../component/CameraModal";
-import { getUserDetails, updateUserDetails } from "../redux/reducer/userDetailsReducer";
+import {
+  getUserDetails,
+  updateUserDetails,
+} from "../redux/reducer/userDetailsReducer";
 
-const UserRegisterPage = ({ navigation }) => {
+const UserRegisterAndUpdate = ({ navigation }) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -28,6 +35,7 @@ const UserRegisterPage = ({ navigation }) => {
     confirmPassword: "",
     picture: "",
   });
+
   const [errors, setErrors] = useState({
     firstName: "",
     lastName: "",
@@ -44,9 +52,8 @@ const UserRegisterPage = ({ navigation }) => {
   const [showCamera, setShowCamera] = useState(false);
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.auth);
-  const user = useSelector((state) => state.auth.user);
-  const { userDetails } = useSelector((state) => state.userDetails);
+  const { user, loading } = useSelector((state) => state.auth);
+  const { userDetails, isLoading } = useSelector((state) => state.userDetails);
 
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
@@ -62,7 +69,9 @@ const UserRegisterPage = ({ navigation }) => {
     const { isValid, errors } = validateForm(formData);
     if (isValid) {
       if (user) {
-        await dispatch(updateUserDetails({ data: formData, id: userDetails.id }));
+        await dispatch(
+          updateUserDetails({ data: formData, id: userDetails.id })
+        );
         setShowConfirmationModal(true);
       } else {
         const userCredential = await dispatch(
@@ -129,7 +138,9 @@ const UserRegisterPage = ({ navigation }) => {
       <View className="flex-1 items-center justify-center mt-20">
         <View className="w-[90%] sm:w-[50%] lg:w-[35%] 2xl:w-[30%] mx-auto bg-white py-8 px-8 mb-10 rounded-lg shadow-lg">
           <View className="items-center mb-5 sm:mb-8">
-            <Text className="text-3xl font-bold">{user ? "User Details" : "Signup"}</Text>
+            <Text className="text-3xl font-bold">
+              {user ? "User Details" : "Signup"}
+            </Text>
           </View>
           <View className="mb-4">
             <TextInput
@@ -171,7 +182,7 @@ const UserRegisterPage = ({ navigation }) => {
             />
             <ErrorComponent errorMessage={errors.phoneNumber} />
           </View>
-          {!user &&
+          {!user && (
             <>
               <View className="mb-4">
                 <TextInput
@@ -200,7 +211,9 @@ const UserRegisterPage = ({ navigation }) => {
                   placeholder="Confirm Password"
                   secureTextEntry={!showConfirmPassword}
                   value={formData.confirmPassword}
-                  onChangeText={(value) => handleChange("confirmPassword", value)}
+                  onChangeText={(value) =>
+                    handleChange("confirmPassword", value)
+                  }
                   autoCapitalize="none"
                 />
                 <ErrorComponent errorMessage={errors.confirmPassword} />
@@ -215,7 +228,8 @@ const UserRegisterPage = ({ navigation }) => {
                   />
                 </TouchableOpacity>
               </View>
-            </>}
+            </>
+          )}
           <View className="mb-4">
             <View className="flex flex-row justify-between items-center">
               <TouchableOpacity
@@ -245,22 +259,27 @@ const UserRegisterPage = ({ navigation }) => {
             )}
           </View>
           <TouchableOpacity
-            className={`${loading ? "bg-gray-200" : "bg-green-500"
-              } rounded-md px-4 py-2 sm:py-3 text-center`}
+            className={`${
+              loading || isLoading ? "bg-gray-200" : "bg-green-500"
+            } rounded-md px-4 py-2 sm:py-3 text-center`}
             onPress={onSubmit}
-            disabled={loading}
+            disabled={loading || isLoading}
           >
-            {loading ? (
+            {loading || isLoading ? (
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
-              <Text className="text-center text-white">{user ? "Update" : "Signup"}</Text>
+              <Text className="text-center text-white">
+                {user ? "Update" : "Signup"}
+              </Text>
             )}
           </TouchableOpacity>
           {showConfirmationModal && (
             <ConfirmationModal
               modalTitle={"Succesfully"}
               modalSubTitle={
-                user ? "User updated successfully" : "User registered succesfully. click ok to HomePage"
+                user
+                  ? "User updated successfully"
+                  : "User registered succesfully. click ok to HomePage"
               }
               visible={showConfirmationModal}
               onClose={() => setShowConfirmationModal(false)}
@@ -277,4 +296,4 @@ const UserRegisterPage = ({ navigation }) => {
   );
 };
 
-export default UserRegisterPage;
+export default UserRegisterAndUpdate;

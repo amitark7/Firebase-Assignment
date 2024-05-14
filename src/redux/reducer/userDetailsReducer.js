@@ -35,7 +35,7 @@ const userDetailsSlice = createSlice({
   name: "userDetails",
   initialState: {
     userDetails: {},
-    loading: false,
+    isLoading: false,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -43,13 +43,13 @@ const userDetailsSlice = createSlice({
       state.userDetails = action.payload;
     })
     .addCase(updateUserDetails.pending,(state)=>{
-      state.loading=true
+      state.isLoading=true
     })
     .addCase(updateUserDetails.fulfilled,(state)=>{
-      state.loading=false
+      state.isLoading=false
     })
     .addCase(updateUserDetails.rejected,(state)=>{
-      state.loading=false
+      state.isLoading=false
     })
 
   },

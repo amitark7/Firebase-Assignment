@@ -139,7 +139,7 @@ const UserRegisterAndUpdate = ({ navigation }) => {
 
   return (
     <ScrollView>
-      {!isSuccess ? (
+      {user && !isSuccess ? (
         <ActivityIndicator size={50} color={"#000000"} className="mt-10" />
       ) : (
         <View className="flex-1 items-center justify-center mt-20">

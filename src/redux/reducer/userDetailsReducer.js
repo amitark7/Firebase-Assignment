@@ -36,7 +36,7 @@ const userDetailsSlice = createSlice({
   initialState: {
     userDetails: {},
     isLoading: false,
-    isSuccess: true,
+    isSuccess: false,
   },
   reducers: {},
   extraReducers: (builder) => {

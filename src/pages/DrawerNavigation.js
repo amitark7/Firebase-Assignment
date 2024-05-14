@@ -13,6 +13,7 @@ const DrawerNavigation = () => {
         name="AllPostPage"
         component={AllPostPage}
         options={{
+          title: "All Post",
           drawerLabel: "All Post",
           drawerIcon: ({ color, size }) => (
             <FontAwesome5 name="list" size={size} color={color} />
@@ -23,6 +24,7 @@ const DrawerNavigation = () => {
         name="UpdateUserDetails"
         component={UserRegisterAndUpdate}
         options={{
+          title: "Update User",
           drawerLabel: "Update User",
           drawerIcon: ({ color, size }) => (
             <FontAwesome5 name="user" size={size} color={color} />
@@ -33,6 +35,7 @@ const DrawerNavigation = () => {
         name="AddPost"
         component={AddPost}
         options={{
+          title: "Add Post",
           drawerLabel: "Add Post",
           drawerIcon: ({ color, size }) => (
             <FontAwesome5 name="plus" size={size} color={color} />

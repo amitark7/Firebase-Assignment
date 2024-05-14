@@ -16,7 +16,7 @@ export const getUserDetails = createAsyncThunk(
       const usersCollectionRef = collection(db, "users");
       const q = query(usersCollectionRef, where("uid", "==", `${uid}`));
       const data = await getDocs(q);
-      return {...data?.docs[0]?.data(),id:data?.docs[0]?.id};
+      return { ...data?.docs[0]?.data(), id: data?.docs[0]?.id };
     } catch (error) {
       return error;
     }
@@ -36,22 +36,30 @@ const userDetailsSlice = createSlice({
   initialState: {
     userDetails: {},
     isLoading: false,
+    isSuccess: true,
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getUserDetails.fulfilled, (state, action) => {
-      state.userDetails = action.payload;
-    })
-    .addCase(updateUserDetails.pending,(state)=>{
-      state.isLoading=true
-    })
-    .addCase(updateUserDetails.fulfilled,(state)=>{
-      state.isLoading=false
-    })
-    .addCase(updateUserDetails.rejected,(state)=>{
-      state.isLoading=false
-    })
-
+    builder
+      .addCase(getUserDetails.fulfilled, (state, action) => {
+        state.userDetails = action.payload;
+        state.isSuccess = true;
+      })
+      .addCase(getUserDetails.rejected, (state) => {
+        state.isSuccess = true;
+      })
+      .addCase(getUserDetails.pending, (state) => {
+        state.isSuccess = false;
+      })
+      .addCase(updateUserDetails.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUserDetails.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(updateUserDetails.rejected, (state) => {
+        state.isLoading = false;
+      });
   },
 });
 export default userDetailsSlice.reducer;

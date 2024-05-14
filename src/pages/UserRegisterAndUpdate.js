@@ -11,17 +11,12 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { handleImagePicker } from "../utils/handleImagePicker";
-import {
-  saveUserData,
-  signupUser,
-} from "../redux/reducer/authReducer";
+import { saveUserData, signupUser } from "../redux/reducer/authReducer";
 import { validateForm } from "../utils/validationCheck";
 import ConfirmationModal from "../component/ConfirmationModal";
 import ErrorComponent from "../component/ErrorComponent";
 import CameraModal from "../component/CameraModal";
-import {
-  updateUserDetails,
-} from "../redux/reducer/userDetailsReducer";
+import { updateUserDetails } from "../redux/reducer/userDetailsReducer";
 
 const UserRegisterAndUpdate = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -104,14 +99,14 @@ const UserRegisterAndUpdate = ({ navigation }) => {
   };
 
   useEffect(() => {
-    if (userDetails) {
+    if (userDetails.id) {
       setFormData({
         ...formData,
-        lastName: userDetails.lastName,
-        firstName: userDetails.firstName,
-        email: userDetails.email,
-        phoneNumber: userDetails.phoneNumber,
-        picture: userDetails.picture,
+        lastName: userDetails?.lastName,
+        firstName: userDetails?.firstName,
+        email: userDetails?.email,
+        phoneNumber: userDetails?.phoneNumber,
+        picture: userDetails?.picture,
       });
     }
   }, []);

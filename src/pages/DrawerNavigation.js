@@ -1,11 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import AllPostPage from "./AllPostPage";
 import AddPost from "./AddPost";
 import { FontAwesome5 } from "@expo/vector-icons";
 import UserRegisterAndUpdate from "./UserRegisterAndUpdate";
+import { useDispatch, useSelector } from "react-redux";
+import { getLoggedInUser } from "../redux/reducer/authReducer";
+import { getUserDetails } from "../redux/reducer/userDetailsReducer";
 
 const DrawerNavigation = () => {
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (user?.uid) {
+      dispatch(getUserDetails(user?.uid));
+    }
+  }, [user]);
+
+  useEffect(() => {
+    dispatch(getLoggedInUser());
+  }, []);
   const Drawer = createDrawerNavigator();
   return (
     <Drawer.Navigator>

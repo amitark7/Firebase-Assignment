@@ -18,15 +18,6 @@ NativeWindStyleSheet.setOutput({
 
 export default function App() {
   const Stack = createNativeStackNavigator();
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
-    });
-    return () => unsubscribe;
-  }, [user]);
-
   return (
     <Provider store={store}>
       <StatusBar />
@@ -36,17 +27,12 @@ export default function App() {
             headerShown: false,
           }}
         >
-          {user ? (
-            <Stack.Screen name="HomePage" component={DrawerNavigation} />
-          ) : (
-            <>
-              <Stack.Screen name="LoginPage" component={LoginPage} />
-              <Stack.Screen
-                name="UserRegisterPage"
-                component={UserRegisterAndUpdate}
-              />
-            </>
-          )}
+          <Stack.Screen name="HomePage" component={DrawerNavigation} />
+          <Stack.Screen name="LoginPage" component={LoginPage} />
+          <Stack.Screen
+            name="UserRegisterPage"
+            component={UserRegisterAndUpdate}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

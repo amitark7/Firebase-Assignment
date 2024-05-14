@@ -38,7 +38,11 @@ const userDetailsSlice = createSlice({
     isLoading: false,
     isSuccess: false,
   },
-  reducers: {},
+  reducers: {
+    resetUserDetails: (state) => {
+      state.userDetails = {};
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getUserDetails.fulfilled, (state, action) => {
@@ -62,4 +66,6 @@ const userDetailsSlice = createSlice({
       });
   },
 });
+
+export const { resetUserDetails } = userDetailsSlice.actions;
 export default userDetailsSlice.reducer;

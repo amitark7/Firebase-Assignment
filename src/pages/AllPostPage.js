@@ -2,10 +2,14 @@ import { Text, View } from "react-native";
 import React from "react";
 import { auth } from "../firebase/firebaseConfig";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useDispatch } from "react-redux";
+import { resetUserDetails } from "../redux/reducer/userDetailsReducer";
 
 const AllPostPage = ({ navigation }) => {
+  const dispatch=useDispatch()
   const logout = async () => {
     await auth.signOut();
+    dispatch(resetUserDetails())
     navigation.replace("LoginPage");
   };
   return (

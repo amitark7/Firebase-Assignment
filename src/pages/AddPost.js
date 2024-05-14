@@ -7,26 +7,38 @@ import {
   View,
 } from "react-native";
 import React, { createRef, useState } from "react";
-import QuillEditor, { QuillToolbar } from "react-native-cn-quill";
 import { handleImagePicker } from "../utils/handleImagePicker";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
+import { useDispatch, useSelector } from "react-redux";
+import { addPost } from "../redux/reducer/postReducer";
 
 const AddPost = () => {
-  const _editor = createRef();
   const richText = createRef();
-  const [title, setTitle] = useState("");
-  const [image, setImage] = useState(null);
-  const [description, setDescription] = useState("");
+  const [newPostData, setNewPostData] = useState({ title: "", description: "", picture: null })
+  const { userDetails } = useSelector((state) => state.userDetails)
+  const dispatch = useDispatch()
 
   const handleImageSelect = async () => {
     const imageURL = await handleImagePicker();
-    setImage(imageURL);
+    setNewPostData({ ...newPostData, picture: imageURL });
   };
-  
-  const handleSave = () => {
-    console.log("Title:", title);
-    console.log("Image:", image);
-    console.log("Description:", description);
+
+  const handleSubmitNewPost = () => {
+    if (newPostData.picture) {
+      dispatch(
+        addPost({
+          title: newPostData.title,
+          photo: newPostData.picture,
+          description: newPostData.description,
+          user: {
+            firstName: userDetails?.firstName,
+            lastName: userDetails?.lastName,
+            updatedBy: userDetails?.uid,
+            picture: userDetails?.picture,
+          },
+        })
+      );
+    }
   };
 
   return (
@@ -38,7 +50,7 @@ const AddPost = () => {
             className="border border-white bg-white rounded-md mb-2 px-4 py-2 sm:py-3"
             placeholder="Enter title"
             value={title}
-            onChangeText={(text) => setTitle(text)}
+            onChangeText={(text) => setNewPostData({ ...newPostData, title: text })}
           />
           <TouchableOpacity
             className="py-3 px-4 bg-blue-500 rounded-md mb-2"
@@ -46,45 +58,21 @@ const AddPost = () => {
           >
             <Text className="text-center text-white">Select Image</Text>
           </TouchableOpacity>
-          {/* <QuillEditor
-            container={true}
-            ref={_editor}
-            onTextChange={({html, delta, oldContents, source })=>{
-              console.log("On Text Change",html,delta);
-              setDescription(html)
-            }}
-            onEditorChange={({name,args})=>{
-              console.log("On Editor Change",name,args[0]);
-            }}
-            onHtmlChange={(value)=>{
-              console.log(value);
-            }}
-            className="h-[180px] mb-2 rounded bg-gray-600 border-red-400"
-          /> */}
           <RichEditor
             ref={richText}
             onChange={(descriptionText) => {
-              console.log("descriptionText:", descriptionText);
-              setDescription(descriptionText);
+              setNewPostData({ ...newPostData, description: descriptionText });
             }}
           />
           <RichToolbar
             editor={richText}
-            // actions={[
-            //   actions.setBold,
-            //   actions.setItalic,
-            //   actions.setUnderline,
-            //   actions.heading1,
-            // ]}
-            // iconMap={{ [actions.heading1]: handleHead }}
           />
-          {/* <QuillToolbar editor={_editor} options="full" theme="light" /> */}
-          {image && (
-            <Image source={{ uri: image }} className="h-[100px] w-[100px] mt-2" />
+          {newPostData.picture && (
+            <Image source={{ uri: newPostData.picture }} className="h-[100px] w-[100px] mt-2" />
           )}
           <TouchableOpacity
             className="p-3 bg-blue-500 rounded-md mt-4"
-            onPress={handleSave}
+            onPress={handleSubmitNewPost}
           >
             <Text className="text-center text-white">Add Post</Text>
           </TouchableOpacity>

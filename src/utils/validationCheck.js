@@ -1,4 +1,4 @@
-const errors = {};
+let errors = {};
 
 const validateEmail = (email) => {
   if (!/\S+@\S+\.\S+/.test(email)) {
@@ -41,7 +41,7 @@ const validatePhoneNumber = (phoneNumber, length) => {
 
 export const validateForm = (userData, isLogin = false, isUpdate = false) => {
   let isValid = true;
-  
+  errors = {};
   errors.email = validateField("Email", userData?.email);
   if (!errors.email) {
     errors.email = validateEmail(userData?.email);

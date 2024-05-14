@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { handleImagePicker } from "../utils/handleImagePicker";
 import {
-  getLoggedInUser,
   saveUserData,
   signupUser,
 } from "../redux/reducer/authReducer";
@@ -21,7 +20,6 @@ import ConfirmationModal from "../component/ConfirmationModal";
 import ErrorComponent from "../component/ErrorComponent";
 import CameraModal from "../component/CameraModal";
 import {
-  getUserDetails,
   updateUserDetails,
 } from "../redux/reducer/userDetailsReducer";
 

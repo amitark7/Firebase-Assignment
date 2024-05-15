@@ -39,8 +39,7 @@ const AddPost = ({ navigation }) => {
     imageURL && setErrors({ ...errors, picture: "" });
   };
 
-  const handleNavigate = () => {
-    navigation.navigate("AllPostPage");
+  const closeModalAndClearFieldData = () => {
     setShowConfirmationModal(false);
     setNewPostData({
       title: "",
@@ -120,7 +119,7 @@ const AddPost = ({ navigation }) => {
             btnOkText={"Ok"}
             modalTitle={"Succesfully"}
             modalSubTitle={"Post Added Successfully"}
-            onConfirm={handleNavigate}
+            onConfirm={closeModalAndClearFieldData}
           />
         )}
       </View>

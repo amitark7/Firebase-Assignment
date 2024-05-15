@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import { useDispatch, useSelector } from "react-redux";
 import { handleImagePicker } from "../utils/handleImagePicker";
@@ -16,8 +16,10 @@ import { validatePostField } from "../utils/validationCheck";
 import ConfirmationModal from "../component/ConfirmationModal";
 import ErrorComponent from "../component/ErrorComponent";
 import slugify from "slugify";
+import { getUserList } from "../redux/reducer/userDetailsReducer";
+import { Picker } from "@react-native-picker/picker";
 
-const AddPost = ({ navigation }) => {
+const AddPost = () => {
   const richText = useRef();
   const [newPostData, setNewPostData] = useState({
     title: "",
@@ -30,7 +32,9 @@ const AddPost = ({ navigation }) => {
     picture: "",
   });
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const { userDetails } = useSelector((state) => state.userDetails);
+  const [selectedUser, setSelectedUser] = useState("");
+  const [taggedUser, setTaggedUser] = useState([]);
+  const { userDetails, userList } = useSelector((state) => state.userDetails);
   const { loading } = useSelector((state) => state.post);
   const dispatch = useDispatch();
 
@@ -61,8 +65,12 @@ const AddPost = ({ navigation }) => {
     }
   };
 
+  useEffect(() => {
+    dispatch(getUserList());
+  }, []);
+
   return (
-    <ScrollView contentContainerStyle={{ flex: 1 }}>
+    <ScrollView>
       <View className="flex-1 justify-center">
         <View className="w-[90%] sm:w-[50%] lg:w-[35%] 2xl:w-[30%] bg-gray-300 mx-auto py-8 px-8 mb-10 rounded-lg shadow-lg">
           <Text className="text-center text-2xl font-bold mb-2">Add Post</Text>
@@ -120,6 +128,36 @@ const AddPost = ({ navigation }) => {
               className="h-[100px] w-[100px] mt-2"
             />
           )}
+          {taggedUser && (
+            <View className="flex flex-row flex-wrap">
+              {taggedUser.map((user) => {
+                return (
+                  <View className="p-1 bg-blue-100 m-1 rounded">
+                    <Text className="text-black">{user}</Text>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+          <View className="mt-4">
+            <Text className="text-sm font-bold mb-1">Tagged User:</Text>
+            <Picker
+              selectedValue={selectedUser}
+              onValueChange={(itemValue, itemIndex) => {
+                setSelectedUser(itemValue);
+                setTaggedUser([...taggedUser, itemValue]);
+              }}
+              className="border bg-white border-white rounded-md"
+            >
+              {userList.map((user) => (
+                <Picker.Item
+                  label={user.firstName}
+                  value={`${user.firstName} ${user.lastName}`}
+                  key={user.uid}
+                />
+              ))}
+            </Picker>
+          </View>
           <TouchableOpacity
             className={`p-3 ${
               loading ? "bg-blue-300" : "bg-blue-500"

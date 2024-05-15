@@ -1,16 +1,39 @@
 import React, { useEffect } from "react";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import {
+  DrawerItemList,
+  createDrawerNavigator,
+} from "@react-navigation/drawer";
 import AllPostPage from "./AllPostPage";
 import AddPost from "./AddPost";
 import { FontAwesome5 } from "@expo/vector-icons";
 import UserRegisterAndUpdate from "./UserRegisterAndUpdate";
 import { useDispatch, useSelector } from "react-redux";
 import { getLoggedInUser } from "../redux/reducer/authReducer";
-import { getUserDetails } from "../redux/reducer/userDetailsReducer";
+import {
+  getUserDetails,
+  resetUserDetails,
+} from "../redux/reducer/userDetailsReducer";
+import {
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { auth } from "../firebase/firebaseConfig";
 
-const DrawerNavigation = () => {
+const DrawerNavigation = ({ navigation }) => {
   const { user } = useSelector((state) => state.auth);
+  const { userDetails } = useSelector((state) => state.userDetails);
   const dispatch = useDispatch();
+
+  const logout = async () => {
+    await auth.signOut();
+    dispatch(resetUserDetails());
+    navigation.replace("LoginPage");
+  };
+
   useEffect(() => {
     if (user?.uid) {
       dispatch(getUserDetails(user?.uid));
@@ -20,9 +43,37 @@ const DrawerNavigation = () => {
   useEffect(() => {
     dispatch(getLoggedInUser());
   }, []);
+
   const Drawer = createDrawerNavigator();
   return (
-    <Drawer.Navigator>
+    <Drawer.Navigator
+      drawerContent={(props) => {
+        return (
+          <SafeAreaView className="flex-1 ">
+            <View className="justify-center items-center p-3">
+              {userDetails.picture && (
+                <Image
+                  source={{ uri: userDetails.picture }}
+                  className="h-[100px] w-[100px] rounded-full"
+                />
+              )}
+              <Text className="text-2xl mt-2">{`${userDetails.firstName} ${userDetails.lastName}`}</Text>
+            </View>
+            <View className="flex-1">
+              <DrawerItemList {...props} />
+            </View>
+            <View className="border-t border-gray-400">
+              <TouchableOpacity className="py-4" onPress={logout}>
+                <View className="flex-row items-center ml-5 mb-2">
+                  <FontAwesome5 name="sign-out-alt" size={22} />
+                  <Text className="text-base ml-4">Sign Out</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        );
+      }}
+    >
       <Drawer.Screen
         name="AllPostPage"
         component={AllPostPage}
@@ -61,3 +112,25 @@ const DrawerNavigation = () => {
 };
 
 export default DrawerNavigation;
+
+const styles = StyleSheet.create({
+  switchTextContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 7,
+    paddingVertical: 5,
+  },
+  preferences: {
+    fontSize: 16,
+    color: "#ccc",
+    paddingTop: 10,
+    fontWeight: "500",
+    paddingLeft: 20,
+  },
+  switchText: {
+    fontSize: 17,
+    color: "",
+    paddingTop: 10,
+    fontWeight: "bold",
+  },
+});

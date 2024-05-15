@@ -7,9 +7,6 @@ import { getDownloadURL, ref, uploadBytes } from "@firebase/storage";
 export const addPost = createAsyncThunk("post/addPost", async (data) => {
   try {
     const timestamp = new Date().toISOString();
-    const slug = slugify(data.title, {
-      lower: true,
-    });
 
     const response = await fetch(data.picture);
     const blob = await response.blob();
@@ -22,7 +19,6 @@ export const addPost = createAsyncThunk("post/addPost", async (data) => {
 
     const postData = {
       ...data,
-      slug: slug,
       createdAt: timestamp,
       updatedAt: timestamp,
       picture: imageURL,

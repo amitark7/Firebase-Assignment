@@ -15,6 +15,7 @@ import { addPost } from "../redux/reducer/postReducer";
 import { validatePostField } from "../utils/validationCheck";
 import ConfirmationModal from "../component/ConfirmationModal";
 import ErrorComponent from "../component/ErrorComponent";
+import slugify from "slugify";
 
 const AddPost = ({ navigation }) => {
   const richText = useRef();
@@ -44,6 +45,7 @@ const AddPost = ({ navigation }) => {
     setNewPostData({
       title: "",
       description: "",
+      slug: "",
       picture: null,
     });
     richText.current.setContentHTML("");
@@ -67,14 +69,26 @@ const AddPost = ({ navigation }) => {
           <View className="mb-2">
             <TextInput
               className="border border-white bg-white rounded-md px-4 py-2 sm:py-3"
-              placeholder="Enter title"
+              placeholder="Enter Title"
               value={newPostData.title}
               onChangeText={(text) => {
-                setNewPostData({ ...newPostData, title: text });
+                setNewPostData({
+                  ...newPostData,
+                  title: text,
+                  slug: slugify(text, { lower: true }),
+                });
                 setErrors({ ...errors, title: "" });
               }}
             />
             <ErrorComponent errorMessage={errors.title} />
+          </View>
+          <View className="mb-2">
+            <TextInput
+              className="border border-white bg-white rounded-md px-4 py-2 sm:py-3"
+              placeholder="Your Slug"
+              value={newPostData.slug}
+              editable={false}
+            />
           </View>
           <View className="mb-2">
             <TouchableOpacity

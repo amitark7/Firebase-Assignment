@@ -25,12 +25,12 @@ export default function App() {
             headerShown: false,
           }}
         >
-          <Stack.Screen name="HomePage" component={DrawerNavigation} />
           <Stack.Screen name="LoginPage" component={LoginPage} />
           <Stack.Screen
             name="UserRegisterPage"
             component={UserRegisterAndUpdate}
           />
+          <Stack.Screen name="HomePage" component={DrawerNavigation} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

@@ -90,6 +90,21 @@ const AddPost = ({ navigation }) => {
               editable={false}
             />
           </View>
+          <View className="mb-2 h-[200px]">
+            <RichEditor
+              ref={richText}
+              useContainer={false}
+              onChange={(descriptionText) => {
+                setNewPostData({
+                  ...newPostData,
+                  description: descriptionText,
+                });
+                setErrors({ ...errors, description: "" });
+              }}
+            />
+            <RichToolbar editor={richText} />
+            <ErrorComponent errorMessage={errors.description} />
+          </View>
           <View className="mb-2">
             <TouchableOpacity
               className="py-3 px-4 bg-blue-500 rounded-md"
@@ -99,15 +114,6 @@ const AddPost = ({ navigation }) => {
             </TouchableOpacity>
             <ErrorComponent errorMessage={errors.picture} />
           </View>
-          <RichEditor
-            ref={richText}
-            onChange={(descriptionText) => {
-              setNewPostData({ ...newPostData, description: descriptionText });
-              setErrors({ ...errors, description: "" });
-            }}
-          />
-          <RichToolbar editor={richText} />
-          <ErrorComponent errorMessage={errors.description} />
           {newPostData.picture && (
             <Image
               source={{ uri: newPostData.picture }}

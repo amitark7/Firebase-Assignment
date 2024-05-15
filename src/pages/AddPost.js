@@ -17,9 +17,10 @@ import ConfirmationModal from "../component/ConfirmationModal";
 import ErrorComponent from "../component/ErrorComponent";
 import slugify from "slugify";
 import { getUserList } from "../redux/reducer/userDetailsReducer";
-import { Picker } from "@react-native-picker/picker";
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const AddPost = () => {
+  DropDownPicker.setMode("BADGE");
   const richText = useRef();
   const [newPostData, setNewPostData] = useState({
     title: "",
@@ -31,12 +32,13 @@ const AddPost = () => {
     description: "",
     picture: "",
   });
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState("");
+  const [open, setOpen] = useState(false);
   const [taggedUser, setTaggedUser] = useState([]);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const { userDetails, userList } = useSelector((state) => state.userDetails);
   const { loading } = useSelector((state) => state.post);
   const dispatch = useDispatch();
+
 
   const handleImageSelect = async () => {
     const imageURL = await handleImagePicker();
@@ -52,18 +54,26 @@ const AddPost = () => {
       slug: "",
       picture: null,
     });
+    setTaggedUser([])
     richText.current.setContentHTML("");
   };
 
   const submitNewPost = async () => {
     const { isValid, errors } = validatePostField(newPostData);
     if (isValid) {
-      await dispatch(addPost({ ...newPostData, updatedBy: userDetails.uid }));
+      await dispatch(addPost({ ...newPostData, updatedBy: userDetails.uid, taggedUser: taggedUser }));
       setShowConfirmationModal(true);
     } else {
       setErrors(errors);
     }
   };
+
+  const userItems = userList.map((user) => {
+    return ({
+      label: `${user.firstName} ${user.lastName}`,
+      value: `${user.firstName} ${user.lastName}`
+    })
+  })
 
   useEffect(() => {
     dispatch(getUserList());
@@ -139,29 +149,26 @@ const AddPost = () => {
               })}
             </View>
           )}
-          <View className="mt-4">
-            <Text className="text-sm font-bold mb-1">Tagged User:</Text>
-            <Picker
-              selectedValue={selectedUser}
-              onValueChange={(itemValue, itemIndex) => {
-                setSelectedUser(itemValue);
-                setTaggedUser([...taggedUser, itemValue]);
-              }}
-              className="border bg-white border-white rounded-md"
-            >
-              {userList.map((user) => (
-                <Picker.Item
-                  label={user.firstName}
-                  value={`${user.firstName} ${user.lastName}`}
-                  key={user.uid}
-                />
-              ))}
-            </Picker>
+          <View className="mt-1">
+            <DropDownPicker
+              open={open}
+              value={taggedUser}
+              items={userItems}
+              setOpen={setOpen}
+              setValue={setTaggedUser}
+              searchable={true}
+              placeholder="Tag User"
+              showBadgeDot={true}
+              multiple={true}
+              badgeColors={["red", "blue", "orange"]}
+              badgeDotColors={["blue", "orange", "green"]}
+              min={0}
+              max={5}
+            />
           </View>
           <TouchableOpacity
-            className={`p-3 ${
-              loading ? "bg-blue-300" : "bg-blue-500"
-            } rounded-md mt-4`}
+            className={`p-3 ${loading ? "bg-blue-300" : "bg-blue-500"
+              } rounded-md mt-4`}
             onPress={submitNewPost}
             disabled={loading}
           >

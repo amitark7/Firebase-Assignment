@@ -83,3 +83,20 @@ export const validateForm = (userData, isLogin = false, isUpdate = false) => {
   }
   return { isValid, errors };
 };
+
+export const validatePostField = (userData) => {
+  let isValid = true;
+  errors = {};
+
+  errors.title = validateField("Title", userData.title);
+  errors.description = validateField("Description", userData.description);
+  errors.picture = validateField("Picture", userData.picture);
+  for (const key in errors) {
+    if (errors[key]) {
+      isValid = false;
+      break;
+    }
+  }
+
+  return { isValid, errors };
+};

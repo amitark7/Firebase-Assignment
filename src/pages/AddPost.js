@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { createRef, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { handleImagePicker } from "../utils/handleImagePicker";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import { useDispatch, useSelector } from "react-redux";
@@ -52,7 +52,6 @@ const AddPost = ({ navigation }) => {
 
   const submitNewPost = async () => {
     const { isValid, errors } = validatePostField(newPostData);
-    console.log(isValid, errors);
     if (isValid) {
       await dispatch(addPost({ ...newPostData, updatedBy: userDetails.uid }));
       setShowConfirmationModal(true);

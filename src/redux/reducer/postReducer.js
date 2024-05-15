@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import slugify from "slugify";
+import { addDoc, collection } from "firebase/firestore";
 import { db, imageStorage } from "../../firebase/firebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "@firebase/storage";
-import slugify from "slugify";
 
 export const addPost = createAsyncThunk("post/addPost", async (data) => {
   try {

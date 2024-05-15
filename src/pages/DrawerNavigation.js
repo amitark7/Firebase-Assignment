@@ -1,27 +1,26 @@
+import {
+  Image,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect } from "react";
 import {
   DrawerItemList,
   createDrawerNavigator,
 } from "@react-navigation/drawer";
-import AllPostPage from "./AllPostPage";
-import AddPost from "./AddPost";
+import { useDispatch, useSelector } from "react-redux";
 import { FontAwesome5 } from "@expo/vector-icons";
 import UserRegisterAndUpdate from "./UserRegisterAndUpdate";
-import { useDispatch, useSelector } from "react-redux";
 import { getLoggedInUser } from "../redux/reducer/authReducer";
 import {
   getUserDetails,
   resetUserDetails,
 } from "../redux/reducer/userDetailsReducer";
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
 import { auth } from "../firebase/firebaseConfig";
+import AllPostPage from "./AllPostPage";
+import AddPost from "./AddPost";
 
 const DrawerNavigation = ({ navigation }) => {
   const { user } = useSelector((state) => state.auth);
@@ -112,25 +111,3 @@ const DrawerNavigation = ({ navigation }) => {
 };
 
 export default DrawerNavigation;
-
-const styles = StyleSheet.create({
-  switchTextContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 7,
-    paddingVertical: 5,
-  },
-  preferences: {
-    fontSize: 16,
-    color: "#ccc",
-    paddingTop: 10,
-    fontWeight: "500",
-    paddingLeft: 20,
-  },
-  switchText: {
-    fontSize: 17,
-    color: "",
-    paddingTop: 10,
-    fontWeight: "bold",
-  },
-});

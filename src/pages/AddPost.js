@@ -8,9 +8,9 @@ import {
   View,
 } from "react-native";
 import React, { useRef, useState } from "react";
-import { handleImagePicker } from "../utils/handleImagePicker";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import { useDispatch, useSelector } from "react-redux";
+import { handleImagePicker } from "../utils/handleImagePicker";
 import { addPost } from "../redux/reducer/postReducer";
 import { validatePostField } from "../utils/validationCheck";
 import ConfirmationModal from "../component/ConfirmationModal";

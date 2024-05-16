@@ -8,6 +8,9 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
+import DropDownPicker from "react-native-dropdown-picker";
+import slugify from "slugify";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import { useDispatch, useSelector } from "react-redux";
 import { handleImagePicker } from "../utils/handleImagePicker";
@@ -15,12 +18,9 @@ import { addPost } from "../redux/reducer/postReducer";
 import { validatePostField } from "../utils/validationCheck";
 import ConfirmationModal from "../component/ConfirmationModal";
 import ErrorComponent from "../component/ErrorComponent";
-import slugify from "slugify";
 import { getUserList } from "../redux/reducer/userDetailsReducer";
-import DropDownPicker from 'react-native-dropdown-picker';
 
 const AddPost = () => {
-  DropDownPicker.setMode("BADGE");
   const richText = useRef();
   const [newPostData, setNewPostData] = useState({
     title: "",
@@ -35,10 +35,10 @@ const AddPost = () => {
   const [open, setOpen] = useState(false);
   const [taggedUser, setTaggedUser] = useState([]);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [users, setUsers] = useState([]);
   const { userDetails, userList } = useSelector((state) => state.userDetails);
   const { loading } = useSelector((state) => state.post);
   const dispatch = useDispatch();
-
 
   const handleImageSelect = async () => {
     const imageURL = await handleImagePicker();
@@ -54,26 +54,40 @@ const AddPost = () => {
       slug: "",
       picture: null,
     });
-    setTaggedUser([])
+    setTaggedUser([]);
     richText.current.setContentHTML("");
   };
 
   const submitNewPost = async () => {
     const { isValid, errors } = validatePostField(newPostData);
     if (isValid) {
-      await dispatch(addPost({ ...newPostData, updatedBy: userDetails.uid, taggedUser: taggedUser }));
+      await dispatch(
+        addPost({
+          ...newPostData,
+          updatedBy: userDetails.uid,
+          taggedUser: taggedUser,
+        })
+      );
       setShowConfirmationModal(true);
     } else {
       setErrors(errors);
     }
   };
 
-  const userItems = userList.map((user) => {
-    return ({
-      label: `${user.firstName} ${user.lastName}`,
-      value: `${user.firstName} ${user.lastName}`
-    })
-  })
+  const deleteTaggedUser = (userIndex) => {
+    setTaggedUser(taggedUser.filter((_, index) => index !== userIndex));
+  };
+
+  useEffect(() => {
+    setUsers(
+      userList.map((user) => {
+        return {
+          label: `${user.firstName} ${user.lastName}`,
+          value: `${user.firstName} ${user.lastName}`,
+        };
+      })
+    );
+  }, [userList]);
 
   useEffect(() => {
     dispatch(getUserList());
@@ -140,10 +154,19 @@ const AddPost = () => {
           )}
           {taggedUser && (
             <View className="flex flex-row flex-wrap">
-              {taggedUser.map((user) => {
+              {taggedUser.map((user, index) => {
                 return (
-                  <View className="p-1 bg-blue-100 m-1 rounded">
+                  <View
+                    key={index}
+                    className="p-1 bg-blue-100 m-1 rounded relative"
+                  >
                     <Text className="text-black">{user}</Text>
+                    <TouchableOpacity
+                      onPress={() => deleteTaggedUser(index)}
+                      className="absolute -right-[2px] -top-[4px]"
+                    >
+                      <FontAwesome5 name="times" size={12} color="#000" />
+                    </TouchableOpacity>
                   </View>
                 );
               })}
@@ -153,22 +176,20 @@ const AddPost = () => {
             <DropDownPicker
               open={open}
               value={taggedUser}
-              items={userItems}
+              items={users}
               setOpen={setOpen}
               setValue={setTaggedUser}
               searchable={true}
               placeholder="Tag User"
               showBadgeDot={true}
               multiple={true}
-              badgeColors={["red", "blue", "orange"]}
-              badgeDotColors={["blue", "orange", "green"]}
-              min={0}
-              max={5}
+              dropDownDirection="TOP"
             />
           </View>
           <TouchableOpacity
-            className={`p-3 ${loading ? "bg-blue-300" : "bg-blue-500"
-              } rounded-md mt-4`}
+            className={`p-3 ${
+              loading ? "bg-blue-300" : "bg-blue-500"
+            } rounded-md mt-4`}
             onPress={submitNewPost}
             disabled={loading}
           >

@@ -22,6 +22,7 @@ import { getUserList } from "../redux/reducer/userDetailsReducer";
 
 const AddPost = () => {
   const richText = useRef();
+  DropDownPicker.setMode("BADGE");
   const [newPostData, setNewPostData] = useState({
     title: "",
     description: "",
@@ -72,10 +73,6 @@ const AddPost = () => {
     } else {
       setErrors(errors);
     }
-  };
-
-  const deleteTaggedUser = (userIndex) => {
-    setTaggedUser(taggedUser.filter((_, index) => index !== userIndex));
   };
 
   useEffect(() => {
@@ -177,28 +174,9 @@ const AddPost = () => {
               showBadgeDot={true}
               multiple={true}
               dropDownDirection="TOP"
+              
             />
           </View>
-          {taggedUser && (
-            <View className="flex flex-row flex-wrap mt-3">
-              {taggedUser.map((user, index) => {
-                return (
-                  <View
-                    key={index}
-                    className="bg-white m-1  rounded relative p-2"
-                  >
-                    <Text className="text-black">{user}</Text>
-                    <TouchableOpacity
-                      onPress={() => deleteTaggedUser(index)}
-                      className="absolute -right-[2px] -top-[4px]"
-                    >
-                      <FontAwesome5 name="times" size={12} color="#000" />
-                    </TouchableOpacity>
-                  </View>
-                );
-              })}
-            </View>
-          )}
           <TouchableOpacity
             className={`p-3 w-[200px] mx-auto ${
               loading ? "bg-blue-300" : "bg-blue-500"

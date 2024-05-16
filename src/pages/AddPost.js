@@ -19,6 +19,7 @@ import { validatePostField } from "../utils/validationCheck";
 import ConfirmationModal from "../component/ConfirmationModal";
 import ErrorComponent from "../component/ErrorComponent";
 import { getUserList } from "../redux/reducer/userDetailsReducer";
+import CameraModal from "../component/CameraModal";
 
 const AddPost = () => {
   const richText = useRef();
@@ -34,6 +35,8 @@ const AddPost = () => {
     picture: "",
   });
   const [open, setOpen] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+  const [image, setImage] = useState("");
   const [taggedUser, setTaggedUser] = useState([]);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [users, setUsers] = useState([]);
@@ -85,6 +88,12 @@ const AddPost = () => {
       })
     );
   }, [userList]);
+
+  useEffect(() => {
+    if (image) {
+      setNewPostData({ ...newPostData, picture: image });
+    }
+  }, [image]);
 
   useEffect(() => {
     dispatch(getUserList());
@@ -151,14 +160,20 @@ const AddPost = () => {
                 </TouchableOpacity>
               </View>
             ) : (
-              <>
+              <View className="flex-row">
                 <TouchableOpacity
                   className="py-3 px-4 rounded-md"
                   onPress={handleImageSelect}
                 >
                   <FontAwesome5 name="upload" size={20} />
                 </TouchableOpacity>
-              </>
+                <TouchableOpacity
+                  className="py-3 px-4 rounded-md"
+                  onPress={()=>setShowCamera(true)}
+                >
+                  <FontAwesome5 name="camera" size={20} />
+                </TouchableOpacity>
+              </View>
             )}
             <ErrorComponent errorMessage={errors.picture} />
           </View>
@@ -174,7 +189,6 @@ const AddPost = () => {
               showBadgeDot={true}
               multiple={true}
               dropDownDirection="TOP"
-              
             />
           </View>
           <TouchableOpacity
@@ -198,6 +212,9 @@ const AddPost = () => {
             modalSubTitle={"Post Added Successfully"}
             onConfirm={closeModalAndClearFieldData}
           />
+        )}
+        {showCamera && (
+          <CameraModal setShowCamera={setShowCamera} setImage={setImage} />
         )}
       </View>
     </ScrollView>

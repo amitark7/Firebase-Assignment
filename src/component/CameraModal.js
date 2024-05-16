@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Camera } from "expo-camera";
-import { Modal, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Button, Modal, Text, TouchableOpacity, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { CameraView, useCameraPermissions } from "expo-camera";
 
 const CameraModal = ({ setShowCamera, setImage }) => {
-  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [facing, setFacing] = useState("back");
   const [camera, setCamera] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [permission, requestPermission] = useCameraPermissions();
 
   const takePicture = async () => {
     if (camera) {
@@ -16,45 +16,54 @@ const CameraModal = ({ setShowCamera, setImage }) => {
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      const cameraStatus = await Camera.requestCameraPermissionsAsync();
-      setHasCameraPermission(cameraStatus.status === "granted");
-    })();
-  }, []);
+  if (!permission) {
+    return <View />;
+  }
 
-  if (hasCameraPermission === false) {
-    return <Text>No access to camera</Text>;
+  if (!permission.granted) {
+    return (
+      <View>
+        <Text style={{ textAlign: "center" }}>
+          We need your permission to show the camera
+        </Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
+
+  function toggleCameraFacing() {
+    setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
   return (
     <Modal
-      visible={hasCameraPermission}
+      visible={permission.granted}
       animationType={"slide"}
       className="flex-1"
     >
       <View className="flex-1">
-        <Camera ref={(ref) => setCamera(ref)} className="flex-1" type={type} />
-        <View className="flex-row justify-between items-center p-5">
-          <TouchableOpacity
-            className="p-4 rounded-full bg-gray-500"
-            onPress={() => {
-              setType(
-                type === Camera.Constants.Type.back
-                  ? Camera.Constants.Type.front
-                  : Camera.Constants.Type.back
-              );
-            }}
-          >
-            <FontAwesome5 name={"sync"} size={24} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="p-4 rounded-full bg-gray-500"
-            onPress={() => takePicture()}
-          >
-            <FontAwesome5 name={"camera"} size={24} color="white" />
-          </TouchableOpacity>
-        </View>
+        <CameraView
+          ref={(ref) => setCamera(ref)}
+          className="flex-1"
+          facing={facing}
+        >
+          <View className="absolute bottom-3 w-full p-5">
+            <View className="flex flex-row justify-between  items-center">
+              <TouchableOpacity
+                className="p-4 rounded-full bg-gray-500"
+                onPress={toggleCameraFacing}
+              >
+                <FontAwesome5 name={"sync"} size={24} color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="p-4 rounded-full bg-gray-500"
+                onPress={() => takePicture()}
+              >
+                <FontAwesome5 name={"camera"} size={24} color="white" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </CameraView>
       </View>
     </Modal>
   );

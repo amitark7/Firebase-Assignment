@@ -31,7 +31,7 @@ const CameraModal = ({ setShowCamera, setImage }) => {
     );
   }
 
-  function toggleCameraFacing() {
+  const toggleCameraFacing = () => {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
 

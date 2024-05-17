@@ -1,6 +1,5 @@
 import {
   ActivityIndicator,
-  Image,
   ScrollView,
   Text,
   TextInput,
@@ -10,16 +9,14 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import slugify from "slugify";
-import { FontAwesome5 } from "@expo/vector-icons";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import { useDispatch, useSelector } from "react-redux";
-import { handleImagePicker } from "../utils/handleImagePicker";
 import { addPost } from "../redux/reducer/postReducer";
 import { validatePostField } from "../utils/validationCheck";
 import ConfirmationModal from "../component/ConfirmationModal";
 import ErrorComponent from "../component/ErrorComponent";
 import { getUserList } from "../redux/reducer/userDetailsReducer";
-import CameraModal from "../component/CameraModal";
+import UploadAndShowPicture from "../component/UploadAndShowPicture";
 
 const AddPost = () => {
   const richText = useRef();
@@ -35,7 +32,6 @@ const AddPost = () => {
     picture: "",
   });
   const [open, setOpen] = useState(false);
-  const [showCamera, setShowCamera] = useState(false);
   const [image, setImage] = useState("");
   const [taggedUser, setTaggedUser] = useState([]);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -43,12 +39,6 @@ const AddPost = () => {
   const { userDetails, userList } = useSelector((state) => state.userDetails);
   const { loading } = useSelector((state) => state.post);
   const dispatch = useDispatch();
-
-  const handleImageSelect = async () => {
-    const imageURL = await handleImagePicker();
-    setNewPostData({ ...newPostData, picture: imageURL });
-    imageURL && setErrors({ ...errors, picture: "" });
-  };
 
   const closeModalAndClearFieldData = () => {
     setShowConfirmationModal(false);
@@ -59,6 +49,7 @@ const AddPost = () => {
       picture: "",
     });
     setTaggedUser([]);
+    setImage("")
     richText.current.setContentHTML("");
   };
 
@@ -91,9 +82,9 @@ const AddPost = () => {
 
   useEffect(() => {
     if (image) {
-      setNewPostData({ ...newPostData, picture: image });
+      setNewPostData({ ...newPostData, picture: image })
     }
-  }, [image]);
+  }, [image])
 
   useEffect(() => {
     dispatch(getUserList());
@@ -143,38 +134,8 @@ const AddPost = () => {
             <RichToolbar editor={richText} />
             <ErrorComponent errorMessage={errors.description} />
           </View>
-          <View className="mb-2 h-[120px] flex justify-center items-center bg-white border-gray-200 border rounded-lg">
-            {newPostData.picture ? (
-              <View className="relative w-[50%] mx-auto">
-                <Image
-                  source={{ uri: newPostData.picture }}
-                  className="h-[80px] w-full mt-2"
-                />
-                <TouchableOpacity
-                  className="absolute -right-1"
-                  onPress={() =>
-                    setNewPostData({ ...newPostData, picture: "" })
-                  }
-                >
-                  <FontAwesome5 name="times" size={16} />
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View className="flex-row">
-                <TouchableOpacity
-                  className="py-3 px-4 rounded-md"
-                  onPress={handleImageSelect}
-                >
-                  <FontAwesome5 name="upload" size={20} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  className="py-3 px-4 rounded-md"
-                  onPress={()=>setShowCamera(true)}
-                >
-                  <FontAwesome5 name="camera" size={20} />
-                </TouchableOpacity>
-              </View>
-            )}
+          <View>
+            <UploadAndShowPicture image={image} setImage={setImage} />
             <ErrorComponent errorMessage={errors.picture} />
           </View>
           <View className="mt-1">
@@ -192,9 +153,8 @@ const AddPost = () => {
             />
           </View>
           <TouchableOpacity
-            className={`p-3 w-[200px] mx-auto ${
-              loading ? "bg-blue-300" : "bg-blue-500"
-            } rounded-md mt-8`}
+            className={`p-3 w-[200px] mx-auto ${loading ? "bg-blue-300" : "bg-blue-500"
+              } rounded-md mt-8`}
             onPress={submitNewPost}
             disabled={loading}
           >
@@ -213,9 +173,7 @@ const AddPost = () => {
             onConfirm={closeModalAndClearFieldData}
           />
         )}
-        {showCamera && (
-          <CameraModal setShowCamera={setShowCamera} setImage={setImage} />
-        )}
+
       </View>
     </ScrollView>
   );

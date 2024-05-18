@@ -31,16 +31,17 @@ const AddPost = () => {
     description: "",
     picture: "",
   });
-  const [open, setOpen] = useState(false);
-  const [image, setImage] = useState("");
-  const [taggedUser, setTaggedUser] = useState([]);
+  const [openDropDown, setOpenDropDown] = useState(false);
+  const [galleryAndCameraImage, setGalleryAndCameraImage] = useState("");
+  const [taggedUsers, setTaggedUsers] = useState([]);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [users, setUsers] = useState([]);
-  const { userDetails, userList } = useSelector((state) => state.userDetails);
+  const [dropDownUserList, setDropDownUserList] = useState([]);
+  const { userDetails } = useSelector((state) => state.userDetails);
+  const { userList } = useSelector((state) => state.userList);
   const { loading } = useSelector((state) => state.post);
   const dispatch = useDispatch();
 
-  const closeModalAndClearFieldData = () => {
+  const closeConfirmationModalAndClearFieldData = () => {
     setShowConfirmationModal(false);
     setNewPostData({
       title: "",
@@ -48,8 +49,8 @@ const AddPost = () => {
       slug: "",
       picture: "",
     });
-    setTaggedUser([]);
-    setImage("")
+    setTaggedUsers([]);
+    setGalleryAndCameraImage("");
     richText.current.setContentHTML("");
   };
 
@@ -60,7 +61,7 @@ const AddPost = () => {
         addPost({
           ...newPostData,
           updatedBy: userDetails.uid,
-          taggedUser: taggedUser,
+          taggedUsers: taggedUsers,
         })
       );
       setShowConfirmationModal(true);
@@ -70,7 +71,7 @@ const AddPost = () => {
   };
 
   useEffect(() => {
-    setUsers(
+    setDropDownUserList(
       userList.map((user) => {
         return {
           label: `${user.firstName} ${user.lastName}`,
@@ -81,10 +82,10 @@ const AddPost = () => {
   }, [userList]);
 
   useEffect(() => {
-    if (image) {
-      setNewPostData({ ...newPostData, picture: image })
+    if (galleryAndCameraImage) {
+      setNewPostData({ ...newPostData, picture: galleryAndCameraImage });
     }
-  }, [image])
+  }, [galleryAndCameraImage]);
 
   useEffect(() => {
     dispatch(getUserList());
@@ -135,16 +136,19 @@ const AddPost = () => {
             <ErrorComponent errorMessage={errors.description} />
           </View>
           <View>
-            <UploadAndShowPicture image={image} setImage={setImage} />
+            <UploadAndShowPicture
+              galleryAndCameraImage={galleryAndCameraImage}
+              setGalleryAndCameraImage={setGalleryAndCameraImage}
+            />
             <ErrorComponent errorMessage={errors.picture} />
           </View>
           <View className="mt-1">
             <DropDownPicker
-              open={open}
-              value={taggedUser}
-              items={users}
-              setOpen={setOpen}
-              setValue={setTaggedUser}
+              open={openDropDown}
+              value={taggedUsers}
+              items={dropDownUserList}
+              setOpen={setOpenDropDown}
+              setValue={setTaggedUsers}
               searchable={true}
               placeholder="Search or choose a tag"
               showBadgeDot={true}
@@ -153,8 +157,9 @@ const AddPost = () => {
             />
           </View>
           <TouchableOpacity
-            className={`p-3 w-[200px] mx-auto ${loading ? "bg-blue-300" : "bg-blue-500"
-              } rounded-md mt-8`}
+            className={`p-3 w-[200px] mx-auto ${
+              loading ? "bg-blue-300" : "bg-blue-500"
+            } rounded-md mt-8`}
             onPress={submitNewPost}
             disabled={loading}
           >
@@ -170,10 +175,9 @@ const AddPost = () => {
             btnOkText={"Ok"}
             modalTitle={"Succesfully"}
             modalSubTitle={"Post Added Successfully"}
-            onConfirm={closeModalAndClearFieldData}
+            onConfirm={closeConfirmationModalAndClearFieldData}
           />
         )}
-
       </View>
     </ScrollView>
   );

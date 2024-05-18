@@ -5,26 +5,26 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { handleImagePicker } from '../utils/handleImagePicker'
 import CameraModal from './CameraModal'
 
-const UploadAndShowPicture = ({ image, setImage }) => {
+const UploadAndShowPicture = ({ galleryAndCameraImage, setGalleryAndCameraImage }) => {
     const [showCamera, setShowCamera] = useState(false);
 
     const handleImageSelect = async () => {
         const imageURL = await handleImagePicker();
-        imageURL && setImage(imageURL)
+        imageURL && setGalleryAndCameraImage(imageURL)
     };
 
     return (
         <View className="mb-2 h-[120px] flex justify-center items-center bg-white border-gray-200 border rounded-lg">
-            {image ? (
+            {galleryAndCameraImage ? (
                 <View className="relative w-[50%] mx-auto">
                     <Image
-                        source={{ uri: image }}
+                        source={{ uri: galleryAndCameraImage }}
                         className=" h-[90px] w-full mt-2"
                     />
                     <TouchableOpacity
                         className="absolute -right-1 -top-24"
                         onPress={() =>
-                            setImage("")
+                            setGalleryAndCameraImage("")
                         }
                     >
                         <FontAwesome5 name="times" size={16} />
@@ -47,7 +47,7 @@ const UploadAndShowPicture = ({ image, setImage }) => {
                 </View>
             )}
             {showCamera && (
-                <CameraModal setShowCamera={setShowCamera} setImage={setImage} />
+                <CameraModal setShowCamera={setShowCamera} setImage={setGalleryAndCameraImage} />
             )}
         </View>
     )

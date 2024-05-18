@@ -31,24 +31,10 @@ export const updateUserDetails = createAsyncThunk(
   }
 );
 
-export const getUserList = createAsyncThunk("user/getUserList", async () => {
-  try {
-    const data = await getDocs(collection(db, "users"));
-    let users = [];
-    data.forEach((doc) => {
-      users = [...users, doc.data()];
-    });
-    return users;
-  } catch (error) {
-    return error;
-  }
-});
-
 const userDetailsSlice = createSlice({
   name: "userDetails",
   initialState: {
     userDetails: {},
-    userList: [],
     isLoading: false,
     isSuccess: false,
   },
@@ -77,9 +63,6 @@ const userDetailsSlice = createSlice({
       })
       .addCase(updateUserDetails.rejected, (state) => {
         state.isLoading = false;
-      })
-      .addCase(getUserList.fulfilled, (state, action) => {
-        state.userList = action.payload;
       });
   },
 });

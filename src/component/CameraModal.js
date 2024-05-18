@@ -23,7 +23,7 @@ const CameraModal = ({ setShowCamera, setImage }) => {
   if (!permission.granted) {
     return (
       <View>
-        <Text style={{ textAlign: "center" }}>
+        <Text className="text-center">
           We need your permission to show the camera
         </Text>
         <Button onPress={requestPermission} title="grant permission" />

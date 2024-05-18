@@ -31,11 +31,12 @@ const AddPost = () => {
     description: "",
     picture: "",
   });
-  const [openDropDown, setOpenDropDown] = useState(false);
-  const [galleryAndCameraImage, setGalleryAndCameraImage] = useState("");
+  const [isUserTagDropDown, setIsUserTagDropDown] = useState(false);
+  const [imageFromGalleryAndCamera, setImageFromGalleryAndCamera] =
+    useState("");
   const [taggedUsers, setTaggedUsers] = useState([]);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [dropDownUserList, setDropDownUserList] = useState([]);
+  const [userDropDownOptions, setUserDropDownOptions] = useState([]);
   const { userDetails } = useSelector((state) => state.userDetails);
   const { userList } = useSelector((state) => state.userList);
   const { loading } = useSelector((state) => state.post);
@@ -50,7 +51,7 @@ const AddPost = () => {
       picture: "",
     });
     setTaggedUsers([]);
-    setGalleryAndCameraImage("");
+    setImageFromGalleryAndCamera("");
     richText.current.setContentHTML("");
   };
 
@@ -71,7 +72,7 @@ const AddPost = () => {
   };
 
   useEffect(() => {
-    setDropDownUserList(
+    setUserDropDownOptions(
       userList.map((user) => {
         return {
           label: `${user.firstName} ${user.lastName}`,
@@ -82,10 +83,10 @@ const AddPost = () => {
   }, [userList]);
 
   useEffect(() => {
-    if (galleryAndCameraImage) {
-      setNewPostData({ ...newPostData, picture: galleryAndCameraImage });
+    if (imageFromGalleryAndCamera) {
+      setNewPostData({ ...newPostData, picture: imageFromGalleryAndCamera });
     }
-  }, [galleryAndCameraImage]);
+  }, [imageFromGalleryAndCamera]);
 
   useEffect(() => {
     dispatch(getUserList());
@@ -137,17 +138,17 @@ const AddPost = () => {
           </View>
           <View>
             <UploadAndShowPicture
-              galleryAndCameraImage={galleryAndCameraImage}
-              setGalleryAndCameraImage={setGalleryAndCameraImage}
+              imageFromGalleryAndCamera={imageFromGalleryAndCamera}
+              setImageFromGalleryAndCamera={setImageFromGalleryAndCamera}
             />
             <ErrorComponent errorMessage={errors.picture} />
           </View>
           <View className="mt-1">
             <DropDownPicker
-              open={openDropDown}
+              open={isUserTagDropDown}
               value={taggedUsers}
-              items={dropDownUserList}
-              setOpen={setOpenDropDown}
+              items={userDropDownOptions}
+              setOpen={setIsUserTagDropDown}
               setValue={setTaggedUsers}
               searchable={true}
               placeholder="Search or choose a tag"

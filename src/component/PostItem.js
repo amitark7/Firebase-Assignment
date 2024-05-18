@@ -14,11 +14,16 @@ const PostItem = ({ post }) => {
       <Text className="text-lg font-bold mb-2">{post.title}</Text>
       <RenderHTML contentWidth={width} source={{ html: post.description }} />
       <View className="flex-1 flex-row flex-wrap gap-1 mt-1">
-        {post.taggedUsers?.map((tag) => {
+        {post.taggedUsers?.map((tag, index) => {
           return (
-            <View className="p-1 bg-gray-300 rounded-lg w-max flex flex-row justify-center items-center gap-1">
-              <FontAwesome5 name="user" size={10} color="black" />
-              <Text className="font-400">{tag}</Text>
+            <View
+              key={index}
+              className="p-1 bg-gray-300 rounded-lg flex flex-row items-center justify-center"
+            >
+              <View className="m-1">
+                <FontAwesome5 name="user" size={10} color="black" />
+              </View>
+              <Text className="font-400 mr-1 pr-1 text-[13px]">{tag}</Text>
             </View>
           );
         })}

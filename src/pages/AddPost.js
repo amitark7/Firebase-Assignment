@@ -15,8 +15,8 @@ import { addPost } from "../redux/reducer/postReducer";
 import { validatePostField } from "../utils/validationCheck";
 import ConfirmationModal from "../component/ConfirmationModal";
 import ErrorComponent from "../component/ErrorComponent";
-import { getUserList } from "../redux/reducer/userDetailsReducer";
 import UploadAndShowPicture from "../component/UploadAndShowPicture";
+import { getUserList } from "../redux/reducer/userListReducer";
 
 const AddPost = () => {
   const richText = useRef();

@@ -1,6 +1,6 @@
 import { Image, Text, View, useWindowDimensions } from "react-native";
 import React from "react";
-import RenderHTML, { HTMLElementModel } from "react-native-render-html";
+import RenderHTML from "react-native-render-html";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 const PostItem = ({ post }) => {
@@ -18,7 +18,7 @@ const PostItem = ({ post }) => {
           return (
             <View className="p-1 bg-gray-300 rounded-lg w-max flex flex-row justify-center items-center gap-1">
               <FontAwesome5 name="user" size={10} color="black" />
-              <Text className="">{tag}</Text>
+              <Text className="font-400">{tag}</Text>
             </View>
           );
         })}

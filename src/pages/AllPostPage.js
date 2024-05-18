@@ -1,9 +1,9 @@
-import { FlatList, View, Text, ActivityIndicator } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import { FlatList, View, ActivityIndicator } from "react-native";
+import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 import { getPostList } from "../redux/reducer/postReducer";
 import PostItem from "../component/PostItem";
-import { useFocusEffect } from "@react-navigation/native";
 
 const AllPostPage = () => {
   const { postList, loading } = useSelector((state) => state.post);

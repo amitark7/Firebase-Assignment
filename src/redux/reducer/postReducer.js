@@ -31,11 +31,11 @@ export const addPost = createAsyncThunk("post/addPost", async (data) => {
 export const getPostList = createAsyncThunk("post/getPostList", async () => {
   try {
     const data = await getDocs(collection(db, "Posts"));
-    let users = [];
+    let posts = [];
     data.forEach((doc) => {
-      users = [...users, doc.data()];
+      posts = [...posts, doc.data()];
     });
-    return users;
+    return posts;
   } catch (error) {
     return error;
   }

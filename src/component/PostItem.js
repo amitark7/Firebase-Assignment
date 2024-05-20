@@ -33,7 +33,7 @@ const PostItem = ({ post }) => {
             className="mt-2"
             onPress={() => setToggleSeeMore(!toggleSeeMore)}
           >
-            <Text className="text-sm">
+            <Text className="text-sm text-blue-400">
               {toggleSeeMore ? "See Less" : "See More..."}
             </Text>
           </TouchableOpacity>

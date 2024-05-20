@@ -16,7 +16,7 @@ const AllPostPage = () => {
   );
 
   return (
-    <View className="py-4 bg-gray-300">
+    <View className="py-4 bg-gray-300 flex-1">
       <FlatList
         data={postList}
         keyExtractor={(_, index) => index.toString()}

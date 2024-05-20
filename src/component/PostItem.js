@@ -1,4 +1,5 @@
 import {
+  FlatList,
   Image,
   Text,
   TouchableOpacity,
@@ -39,19 +40,19 @@ const PostItem = ({ post }) => {
           </TouchableOpacity>
         )}
         <View className="flex flex-row flex-wrap gap-1 mt-1">
-          {post.taggedUsers?.map((tag, index) => {
-            return (
-              <View
-                key={index}
-                className="p-1 bg-gray-300 rounded-lg flex flex-row items-center justify-center"
-              >
+          <FlatList
+            data={post?.taggedUsers}
+            horizontal={true}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View className="p-1 m-1 bg-gray-300 rounded-lg flex flex-row items-center justify-center">
                 <View className="m-1">
                   <FontAwesome5 name="user" size={10} color="black" />
                 </View>
-                <Text className="font-400 mr-1 pr-1 text-[13px]">{tag}</Text>
+                <Text className="font-400 mr-1 pr-1 text-[13px]">{item}</Text>
               </View>
-            );
-          })}
+            )}
+          />
         </View>
       </View>
     </View>

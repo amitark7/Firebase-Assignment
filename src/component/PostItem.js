@@ -6,7 +6,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 const PostItem = ({ post }) => {
   const { width } = useWindowDimensions();
   return (
-    <View className="w-[90%] mx-auto border-gray-400 rounded mb-4 border">
+    <View className="w-[90%] mx-auto border-gray-400 rounded mb-4 border shadow-lg">
       <Image
         source={{ uri: post.picture }}
         className="w-full h-52 mb-2"

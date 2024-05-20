@@ -19,9 +19,6 @@ const AllPostPage = () => {
     <View>
       <FlatList
         data={postList}
-        ItemSeparatorComponent={
-          <View className="h-[2px] bg-gray-300 mx-auto w-[91%]"></View>
-        }
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item }) => <PostItem post={item} />}
         ListFooterComponent={

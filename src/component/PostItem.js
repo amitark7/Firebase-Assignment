@@ -11,7 +11,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 const PostItem = ({ post }) => {
   const { width } = useWindowDimensions();
-  const [toggleShowMore, setToggleShowMore] = useState(false);
+  const [toggleSeeMore, setToggleSeeMore] = useState(false);
 
   return (
     <View className="w-[90%] mx-auto border-gray-400 rounded mb-4 border shadow-lg">
@@ -22,7 +22,7 @@ const PostItem = ({ post }) => {
           contentWidth={width}
           source={{
             html: `${
-              toggleShowMore
+              toggleSeeMore
                 ? post.description
                 : post.description.substring(0, 200)
             }`,
@@ -31,10 +31,10 @@ const PostItem = ({ post }) => {
         {post.description.length > 200 && (
           <TouchableOpacity
             className="mt-2"
-            onPress={() => setToggleShowMore(!toggleShowMore)}
+            onPress={() => setToggleSeeMore(!toggleSeeMore)}
           >
             <Text className="text-sm">
-              {toggleShowMore ? "See Less" : "See More..."}
+              {toggleSeeMore ? "See Less" : "See More..."}
             </Text>
           </TouchableOpacity>
         )}

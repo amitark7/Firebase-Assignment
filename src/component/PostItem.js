@@ -1,19 +1,49 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
   useWindowDimensions,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import RenderHTML from "react-native-render-html";
 import { FontAwesome5 } from "@expo/vector-icons";
 import moment from "moment";
+import { useDispatch, useSelector } from "react-redux";
+import { addComment, getComments } from "../redux/reducer/commentReducer";
 
 const PostItem = ({ post }) => {
   const { width } = useWindowDimensions();
   const [toggleSeeMore, setToggleSeeMore] = useState(false);
+  const [commentTxt, setCommentTxt] = useState("");
+  const [commentList, setCommentList] = useState([]);
+  const { userDetails } = useSelector((state) => state.userDetails);
+  const { loading, comments } = useSelector((state) => state.comments);
+  const dispatch = useDispatch();
+
+  const addComments = async () => {
+    const newComment = {
+      postId: post.id,
+      comment: commentTxt,
+      uid: userDetails.uid,
+      profilePic: userDetails.picture,
+      displayName: `${userDetails.firstName} ${userDetails.lastName}`,
+    };
+    await dispatch(addComment(newComment));
+    setCommentTxt("");
+  };
+
+  const fetchComments = async () => {
+    await dispatch(getComments);
+    setCommentList(comments);
+  };
+
+  useEffect(() => {
+    dispatch(getComments(post.id));
+  }, []);
 
   return (
     <View className="w-[95%] mx-auto border-gray-200 bg-white rounded-lg mb-4 border shadow-lg">
@@ -66,6 +96,40 @@ const PostItem = ({ post }) => {
               </View>
             )}
           />
+        </View>
+        <View className="relative">
+          <TextInput
+            placeholder="Add comment"
+            className="border border-gray-300 rounded-lg p-1 pl-2"
+            onChangeText={(txt) => setCommentTxt(txt)}
+          />
+          <TouchableOpacity
+            className="absolute right-2 top-[25%]"
+            onPress={addComments}
+          >
+            {loading ? (
+              <ActivityIndicator size={"small"} />
+            ) : (
+              <FontAwesome5 name="plus" color="#000" size={18} />
+            )}
+          </TouchableOpacity>
+        </View>
+        <View>
+          {
+            <FlatList
+              data={commentList}
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={({ item }) => (
+                <View>
+                  <Image source={{ uri: item.profilePic }} />
+                  <View>
+                    <Text>{item.displayName}</Text>
+                    <Text>{item.comment}</Text>
+                  </View>
+                </View>
+              )}
+            />
+          }
         </View>
       </View>
     </View>

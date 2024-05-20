@@ -16,22 +16,22 @@ const PostItem = ({ post }) => {
   const [toggleSeeMore, setToggleSeeMore] = useState(false);
 
   return (
-    <View className="w-[95%] mx-auto border-gray-300 bg-white rounded-lg mb-4 border shadow-lg">
-        <View className="flex flex-row items-center gap-3 mb-2 mt-1 mx-1">
-          <Image
-            className="h-12 w-12 rounded-full"
-            source={{ uri: post?.profilePic }}
-          />
-          <View>
-            <Text className="font-bold text-xl">{post.displayName}</Text>
-            <Text className="text-gray-400">
-              {moment(post.createdAt).format("DD MMM YYYY")}
-            </Text>
-          </View>
+    <View className="w-[95%] mx-auto border-gray-200 bg-white rounded-lg mb-4 border shadow-lg">
+      <View className="flex flex-row items-center gap-3 mb-2 mt-1 mx-1">
+        <Image
+          className="h-8 w-8 rounded-full"
+          source={{ uri: post?.profilePic }}
+        />
+        <View>
+          <Text className="font-bold text-sm">{post.displayName}</Text>
+          <Text className="text-[9px] text-gray-400">
+            {moment(post.createdAt).format("DD MMM YYYY HH:mm")}
+          </Text>
         </View>
-      <Image source={{ uri: post.picture }} className="w-full h-52 mb-2" />
-      <View className="py-1 px-2">
-        <Text className="text-lg font-bold mb-2">{post.title}</Text>
+      </View>
+      <Image source={{ uri: post.picture }} className="w-full h-40 mb-2" />
+      <View className="pb-1 px-2">
+        <Text className="text-base leading-4 font-bold mb-2">{post.title}</Text>
         <RenderHTML
           contentWidth={width}
           source={{
@@ -47,7 +47,7 @@ const PostItem = ({ post }) => {
             className="mt-2"
             onPress={() => setToggleSeeMore(!toggleSeeMore)}
           >
-            <Text className="text-sm text-blue-400">
+            <Text className="text-xs text-blue-400">
               {toggleSeeMore ? "See Less" : "See More..."}
             </Text>
           </TouchableOpacity>
@@ -58,11 +58,11 @@ const PostItem = ({ post }) => {
             horizontal={true}
             keyExtractor={(_, index) => index.toString()}
             renderItem={({ item }) => (
-              <View className="p-1 m-1 bg-gray-300 rounded-lg flex flex-row items-center justify-center">
+              <View className="m-1 p-[2px] border-gray-200 border rounded-3xl flex flex-row items-center justify-center">
                 <View className="m-1">
-                  <FontAwesome5 name="user" size={10} color="black" />
+                  <FontAwesome5 name="user" size={8} color="black" />
                 </View>
-                <Text className="font-400 mr-1 pr-1 text-[13px]">{item}</Text>
+                <Text className="font-400 text-[9px] mr-1 pr-1">{item}</Text>
               </View>
             )}
           />

@@ -33,7 +33,7 @@ export const getPostList = createAsyncThunk("post/getPostList", async () => {
     const data = await getDocs(collection(db, "Posts"));
     let posts = [];
     data.forEach((doc) => {
-      posts = [...posts, doc.data()];
+      posts = [...posts, { ...doc.data(), id: doc.id }];
     });
     return posts;
   } catch (error) {

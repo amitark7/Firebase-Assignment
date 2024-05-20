@@ -63,6 +63,8 @@ const AddPost = () => {
           ...newPostData,
           updatedBy: userDetails.uid,
           taggedUsers: taggedUsers,
+          profilePic: userDetails.picture,
+          displayName: `${userDetails.firstName} ${userDetails.lastName}`,
         })
       );
       setShowConfirmationModal(true);

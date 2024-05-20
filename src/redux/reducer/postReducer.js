@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import slugify from "slugify";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs } from "firebase/firestore";
 import { db, imageStorage } from "../../firebase/firebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "@firebase/storage";
 
@@ -28,10 +27,25 @@ export const addPost = createAsyncThunk("post/addPost", async (data) => {
     return error;
   }
 });
+
+export const getPostList = createAsyncThunk("post/getPostList", async () => {
+  try {
+    const data = await getDocs(collection(db, "Posts"));
+    let posts = [];
+    data.forEach((doc) => {
+      posts = [...posts, { ...doc.data(), id: doc.id }];
+    });
+    return posts;
+  } catch (error) {
+    return error;
+  }
+});
+
 const postSlice = createSlice({
   name: "post",
   initialState: {
     loading: false,
+    postList: [],
   },
   extraReducers: (builder) => {
     builder
@@ -42,6 +56,16 @@ const postSlice = createSlice({
         state.loading = false;
       })
       .addCase(addPost.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(getPostList.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getPostList.fulfilled, (state, action) => {
+        state.postList = action.payload;
+        state.loading = false;
+      })
+      .addCase(getPostList.rejected, (state) => {
         state.loading = false;
       });
   },

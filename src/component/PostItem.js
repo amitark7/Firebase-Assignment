@@ -32,18 +32,14 @@ const PostItem = ({ post }) => {
       profilePic: userDetails.picture,
       displayName: `${userDetails.firstName} ${userDetails.lastName}`,
     };
+
     await dispatch(addComment(newComment));
     setCommentTxt("");
   };
 
-  const fetchComments = async () => {
-    await dispatch(getComments);
-    setCommentList(comments);
-  };
-
   useEffect(() => {
-    dispatch(getComments(post.id));
-  }, []);
+    setCommentList(comments.filter((comment) => comment.postId === post.id))
+  }, [])
 
   return (
     <View className="w-[95%] mx-auto border-gray-200 bg-white rounded-lg mb-4 border shadow-lg">
@@ -65,11 +61,10 @@ const PostItem = ({ post }) => {
         <RenderHTML
           contentWidth={width}
           source={{
-            html: `${
-              toggleSeeMore
-                ? post.description
-                : post.description.substring(0, 200)
-            }`,
+            html: `${toggleSeeMore
+              ? post.description
+              : post.description.substring(0, 200)
+              }`,
           }}
         />
         {post.description.length > 200 && (
@@ -114,22 +109,21 @@ const PostItem = ({ post }) => {
             )}
           </TouchableOpacity>
         </View>
-        <View>
-          {
-            <FlatList
-              data={commentList}
-              keyExtractor={(_, index) => index.toString()}
-              renderItem={({ item }) => (
+        <View className="m-1 p-1 mb-1">
+          <Text>Comments:-</Text>
+          <FlatList
+            data={commentList}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View className="flex flex-row items-center gap-1 m-[2px]">
+                <Image className="h-7 w-7 rounded-full" source={{ uri: item.profilePic }} />
                 <View>
-                  <Image source={{ uri: item.profilePic }} />
-                  <View>
-                    <Text>{item.displayName}</Text>
-                    <Text>{item.comment}</Text>
-                  </View>
+                  <Text className="font-bold text-[11px]">{item.displayName}</Text>
+                  <Text className="text-gray-600 text-[9px]">{item.comment}</Text>
                 </View>
-              )}
-            />
-          }
+              </View>
+            )}
+          />
         </View>
       </View>
     </View>

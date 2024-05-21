@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { getPostList } from "../redux/reducer/postReducer";
 import PostItem from "../component/PostItem";
+import { getComments } from "../redux/reducer/commentReducer";
 
 const AllPostPage = () => {
   const { postList, loading } = useSelector((state) => state.post);
@@ -12,6 +13,7 @@ const AllPostPage = () => {
   useFocusEffect(
     useCallback(() => {
       dispatch(getPostList());
+      dispatch(getComments())
     }, [dispatch])
   );
 

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 
 export const addComment = createAsyncThunk(
@@ -18,8 +18,16 @@ export const getComments = createAsyncThunk(
   "comments/getComment",
   async (data) => {
     try {
-      console.log("Hey", data);
-    } catch (error) {}
+      const data = await getDocs(collection(db, "comments"));
+      let comments = [];
+      data.forEach((doc) => {
+        comments = [...comments, { ...doc.data(), id: doc.id }];
+      });
+      console.log("CommentList", comments);
+      return comments;
+    } catch (error) {
+      return error
+    }
   }
 );
 
@@ -36,7 +44,10 @@ const commentSlice = createSlice({
       })
       .addCase(addComment.rejected, (state) => {
         state.loading = false;
-      });
+      })
+      .addCase(getComments.fulfilled, (state, action) => {
+        state.comments = action.payload
+      })
   },
 });
 

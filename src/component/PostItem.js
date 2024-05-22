@@ -29,7 +29,7 @@ const PostItem = ({ post }) => {
   const { loading, comments } = useSelector((state) => state.comments);
   const dispatch = useDispatch();
 
-  const addAndUpdateComments = async () => {
+  const addAndUpdateComment = async () => {
     const newComment = {
       postId: post.id,
       commentTitle: commentTxt,
@@ -142,13 +142,13 @@ const PostItem = ({ post }) => {
           <TextInput
             placeholder="Add comment"
             value={commentTxt}
-            className="border border-gray-300 rounded-lg p-1 pl-2 w-[85%]"
+            className="border border-gray-300 rounded-lg p-1 pl-2 w-[85%] pr-7"
             onChangeText={(txt) => setCommentTxt(txt)}
           />
           <TouchableOpacity
             className="absolute right-3 top-[20%]"
             disabled={commentTxt.length === 0 ? true : false}
-            onPress={addAndUpdateComments}
+            onPress={addAndUpdateComment}
           >
             {loading ? (
               <ActivityIndicator size={"small"} />
@@ -172,7 +172,7 @@ const PostItem = ({ post }) => {
                   className="h-7 w-7 rounded-full"
                   source={{ uri: item.profilePic }}
                 />
-                <View>
+                <View className="w-[80%]">
                   <Text className="font-bold text-[12px]">
                     {item.displayName}
                   </Text>
@@ -181,7 +181,7 @@ const PostItem = ({ post }) => {
                   </Text>
                 </View>
                 {userDetails.uid === item.uid && (
-                  <View className="absolute right-0 flex flex-row gap-2">
+                  <View className="absolute -right-2 flex flex-row gap-2">
                     <TouchableOpacity
                       onPress={() => fillAndSetUserComment(item)}
                     >

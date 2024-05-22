@@ -13,12 +13,17 @@ import RenderHTML from "react-native-render-html";
 import { FontAwesome5 } from "@expo/vector-icons";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
-import { addComment, getComments } from "../redux/reducer/commentReducer";
+import {
+  addComment,
+  deleteComment,
+  updateComment,
+} from "../redux/reducer/commentReducer";
 
 const PostItem = ({ post }) => {
   const { width } = useWindowDimensions();
   const [toggleSeeMore, setToggleSeeMore] = useState(false);
   const [commentTxt, setCommentTxt] = useState("");
+  const [selectComment, setSelectComment] = useState(null);
   const [commentList, setCommentList] = useState([]);
   const { userDetails } = useSelector((state) => state.userDetails);
   const { loading, comments } = useSelector((state) => state.comments);
@@ -27,19 +32,54 @@ const PostItem = ({ post }) => {
   const addComments = async () => {
     const newComment = {
       postId: post.id,
-      comment: commentTxt,
+      commentTitle: commentTxt,
       uid: userDetails.uid,
       profilePic: userDetails.picture,
       displayName: `${userDetails.firstName} ${userDetails.lastName}`,
     };
+    try {
+      if (selectComment) {
+        await dispatch(
+          updateComment({ ...selectComment, commentTitle: commentTxt })
+        );
+        setCommentList(
+          commentList.map((comment) => {
+            if (comment.id === selectComment.id) {
+              return { ...comment, commentTitle: commentTxt };
+            }
+            return comment;
+          })
+        );
+      } else {
+        const response = await dispatch(addComment(newComment));
+        setCommentList([
+          ...commentList,
+          { ...newComment, id: response?.payload },
+        ]);
+      }
+      setCommentTxt("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    await dispatch(addComment(newComment));
-    setCommentTxt("");
+  const deleteComments = async (id) => {
+    try {
+      await dispatch(deleteComment(id));
+      setCommentList(commentList.filter((comment) => comment.id !== id));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateComments = async (comment) => {
+    setCommentTxt(comment.commentTitle);
+    setSelectComment(comment);
   };
 
   useEffect(() => {
-    setCommentList(comments.filter((comment) => comment.postId === post.id))
-  }, [])
+    setCommentList(comments.filter((comment) => comment.postId === post.id));
+  }, [comments]);
 
   return (
     <View className="w-[95%] mx-auto border-gray-200 bg-white rounded-lg mb-4 border shadow-lg">
@@ -61,10 +101,11 @@ const PostItem = ({ post }) => {
         <RenderHTML
           contentWidth={width}
           source={{
-            html: `${toggleSeeMore
-              ? post.description
-              : post.description.substring(0, 200)
-              }`,
+            html: `${
+              toggleSeeMore
+                ? post.description
+                : post.description.substring(0, 200)
+            }`,
           }}
         />
         {post.description.length > 200 && (
@@ -92,35 +133,62 @@ const PostItem = ({ post }) => {
             )}
           />
         </View>
-        <View className="relative">
+        <View className="relative flex-1 flex-row items-center gap-1 mt-2">
+          <Image
+            className="h-9 w-9 rounded-full"
+            source={{ uri: userDetails.picture }}
+          />
           <TextInput
             placeholder="Add comment"
-            className="border border-gray-300 rounded-lg p-1 pl-2"
+            value={commentTxt}
+            className="border border-gray-300 rounded-lg p-1 pl-2 w-[85%]"
             onChangeText={(txt) => setCommentTxt(txt)}
           />
           <TouchableOpacity
-            className="absolute right-2 top-[25%]"
+            className="absolute right-3 top-[20%]"
+            disabled={commentTxt.length === 0 ? true : false}
             onPress={addComments}
           >
             {loading ? (
               <ActivityIndicator size={"small"} />
             ) : (
-              <FontAwesome5 name="plus" color="#000" size={18} />
+              <FontAwesome5
+                name="plus"
+                color={commentTxt.length > 0 ? "green" : "#000"}
+                size={20}
+              />
             )}
           </TouchableOpacity>
         </View>
         <View className="m-1 p-1 mb-1">
-          <Text>Comments:-</Text>
+          {commentList.length > 0 && <Text>Comments {commentList.length}</Text>}
           <FlatList
             data={commentList}
             keyExtractor={(_, index) => index.toString()}
             renderItem={({ item }) => (
-              <View className="flex flex-row items-center gap-1 m-[2px]">
-                <Image className="h-7 w-7 rounded-full" source={{ uri: item.profilePic }} />
+              <View className="flex flex-row items-center gap-1 my-[2px]">
+                <Image
+                  className="h-7 w-7 rounded-full"
+                  source={{ uri: item.profilePic }}
+                />
                 <View>
-                  <Text className="font-bold text-[11px]">{item.displayName}</Text>
-                  <Text className="text-gray-600 text-[9px]">{item.comment}</Text>
+                  <Text className="font-bold text-[12px]">
+                    {item.displayName}
+                  </Text>
+                  <Text className="text-gray-600 text-[9px]">
+                    {item.commentTitle}
+                  </Text>
                 </View>
+                {userDetails.uid === item.uid && (
+                  <View className="absolute right-0 flex flex-row gap-2">
+                    <TouchableOpacity onPress={() => updateComments(item)}>
+                      <FontAwesome5 name="pen" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => deleteComments(item.id)}>
+                      <FontAwesome5 name="trash" size={12} color="red" />
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             )}
           />

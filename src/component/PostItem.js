@@ -29,7 +29,7 @@ const PostItem = ({ post }) => {
   const { loading, comments } = useSelector((state) => state.comments);
   const dispatch = useDispatch();
 
-  const addComments = async () => {
+  const addAndUpdateComments = async () => {
     const newComment = {
       postId: post.id,
       commentTitle: commentTxt,
@@ -58,6 +58,7 @@ const PostItem = ({ post }) => {
         ]);
       }
       setCommentTxt("");
+      setSelectComment(null);
     } catch (error) {
       console.log(error);
     }
@@ -72,7 +73,7 @@ const PostItem = ({ post }) => {
     }
   };
 
-  const updateComments = async (comment) => {
+  const fillAndSetUserComment = async (comment) => {
     setCommentTxt(comment.commentTitle);
     setSelectComment(comment);
   };
@@ -147,7 +148,7 @@ const PostItem = ({ post }) => {
           <TouchableOpacity
             className="absolute right-3 top-[20%]"
             disabled={commentTxt.length === 0 ? true : false}
-            onPress={addComments}
+            onPress={addAndUpdateComments}
           >
             {loading ? (
               <ActivityIndicator size={"small"} />
@@ -181,7 +182,9 @@ const PostItem = ({ post }) => {
                 </View>
                 {userDetails.uid === item.uid && (
                   <View className="absolute right-0 flex flex-row gap-2">
-                    <TouchableOpacity onPress={() => updateComments(item)}>
+                    <TouchableOpacity
+                      onPress={() => fillAndSetUserComment(item)}
+                    >
                       <FontAwesome5 name="pen" />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => deleteComments(item.id)}>

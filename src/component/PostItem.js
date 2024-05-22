@@ -18,6 +18,7 @@ import {
   deleteComment,
   updateComment,
 } from "../redux/reducer/commentReducer";
+import { addAndDeleteCommentIdInPost } from "../redux/reducer/postReducer";
 
 const PostItem = ({ post }) => {
   const { width } = useWindowDimensions();
@@ -33,7 +34,7 @@ const PostItem = ({ post }) => {
     const newComment = {
       postId: post.id,
       commentTitle: commentTxt,
-      uid: userDetails.uid,
+      commentedBy: userDetails.uid,
       profilePic: userDetails.picture,
       displayName: `${userDetails.firstName} ${userDetails.lastName}`,
     };
@@ -56,6 +57,9 @@ const PostItem = ({ post }) => {
           ...commentList,
           { ...newComment, id: response?.payload },
         ]);
+        dispatch(
+          addAndDeleteCommentIdInPost({ post, commentId: response?.payload })
+        );
       }
       setCommentTxt("");
       setSelectComment(null);
@@ -68,6 +72,9 @@ const PostItem = ({ post }) => {
     try {
       await dispatch(deleteComment(id));
       setCommentList(commentList.filter((comment) => comment.id !== id));
+      dispatch(
+        addAndDeleteCommentIdInPost({ post, commentId: id, isDelete: true })
+      );
     } catch (error) {
       console.log(error);
     }
@@ -180,7 +187,7 @@ const PostItem = ({ post }) => {
                     {item.commentTitle}
                   </Text>
                 </View>
-                {userDetails.uid === item.uid && (
+                {userDetails.uid === item.commentedBy && (
                   <View className="absolute -right-2 flex flex-row gap-2">
                     <TouchableOpacity
                       onPress={() => fillAndSetUserComment(item)}

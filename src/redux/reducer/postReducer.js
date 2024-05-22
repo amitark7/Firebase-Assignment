@@ -1,5 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { db, imageStorage } from "../../firebase/firebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "@firebase/storage";
 
@@ -41,6 +47,43 @@ export const getPostList = createAsyncThunk("post/getPostList", async () => {
   }
 });
 
+export const addAndDeleteCommentIdInPost = createAsyncThunk(
+  "post/addAndDeleteCommentIdInPost",
+  async (data, { getState }) => {
+    try {
+      const { postList } = getState().post;
+
+      const updatedPostList = postList.map((post) => {
+        if (post.id === data.post.id) {
+          let updatedComments = [];
+          if (data?.isDelete) {
+            updatedComments = post.comments.filter(
+              (commentId) => commentId!== data.commentId
+            );
+            return { ...post, comments: updatedComments };
+          }
+          updatedComments = post.comments
+            ? [...post.comments, data.commentId]
+            : [data.commentId];
+          return { ...post, comments: updatedComments };
+        }
+        return post;
+      });
+
+      const postDoc = doc(db, "Posts", data.post.id);
+      await updateDoc(postDoc, {
+        ...data.post,
+        comments: updatedPostList.find((post) => post.id === data.post.id)
+          .comments,
+      });
+
+      return updatedPostList;
+    } catch (error) {
+      return error;
+    }
+  }
+);
+
 const postSlice = createSlice({
   name: "post",
   initialState: {
@@ -67,6 +110,9 @@ const postSlice = createSlice({
       })
       .addCase(getPostList.rejected, (state) => {
         state.loading = false;
+      })
+      .addCase(addAndDeleteCommentIdInPost.fulfilled, (state, action) => {
+        state.postList = action.payload;
       });
   },
 });

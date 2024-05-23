@@ -18,7 +18,9 @@ import ErrorComponent from "../component/ErrorComponent";
 import UploadAndShowPicture from "../component/UploadAndShowPicture";
 import { getUserList } from "../redux/reducer/userListReducer";
 
-const AddPost = () => {
+const AddPost = ({ route }) => {
+  const post = route.params.post;
+  console.log("Post", post);
   const richText = useRef();
   DropDownPicker.setMode("BADGE");
   const [newPostData, setNewPostData] = useState({
@@ -92,6 +94,12 @@ const AddPost = () => {
 
   useEffect(() => {
     dispatch(getUserList());
+    if (post) {
+      setNewPostData(post);
+      setImageFromGalleryAndCamera(post.picture);
+      richText.current.setContentHTML(post.description);
+      setTaggedUsers(post?.taggedUsers);
+    }
   }, []);
 
   return (

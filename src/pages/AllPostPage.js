@@ -6,7 +6,7 @@ import { getPostList } from "../redux/reducer/postReducer";
 import PostItem from "../component/PostItem";
 import { getComments } from "../redux/reducer/commentReducer";
 
-const AllPostPage = () => {
+const AllPostPage = ({navigation}) => {
   const { postList, loading } = useSelector((state) => state.post);
   const dispatch = useDispatch();
 
@@ -22,7 +22,7 @@ const AllPostPage = () => {
       <FlatList
         data={postList}
         keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item }) => <PostItem post={item} />}
+        renderItem={({ item }) => <PostItem post={item} navigation={navigation}/>}
         ListFooterComponent={
           loading && (
             <View className="flex-1 justify-center items-center">

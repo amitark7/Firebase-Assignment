@@ -18,14 +18,20 @@ import {
   deleteComment,
   updateComment,
 } from "../redux/reducer/commentReducer";
-import { addAndDeleteCommentIdInPost } from "../redux/reducer/postReducer";
+import {
+  addAndDeleteCommentIdInPost,
+  deletePost,
+} from "../redux/reducer/postReducer";
+import ConfirmationModal from "./ConfirmationModal";
 
-const PostItem = ({ post }) => {
+const PostItem = ({ post, navigation }) => {
   const { width } = useWindowDimensions();
   const [toggleSeeMore, setToggleSeeMore] = useState(false);
   const [commentTxt, setCommentTxt] = useState("");
+  const [showConfiramtionModal, setShowConfirmationModal] = useState(false);
   const [selectComment, setSelectComment] = useState(null);
   const [commentList, setCommentList] = useState([]);
+  const [showMenuOptions, setShowMenuOptions] = useState(false);
   const { userDetails } = useSelector((state) => state.userDetails);
   const { loading, comments } = useSelector((state) => state.comments);
   const dispatch = useDispatch();
@@ -68,16 +74,32 @@ const PostItem = ({ post }) => {
     }
   };
 
-  const deleteComments = async (id) => {
+  const onModalConfirm = async () => {
     try {
-      await dispatch(deleteComment(id));
-      setCommentList(commentList.filter((comment) => comment.id !== id));
-      dispatch(
-        addAndDeleteCommentIdInPost({ post, commentId: id, isDelete: true })
-      );
+      if (selectComment) {
+        await dispatch(deleteComment(selectComment.id));
+        setCommentList(
+          commentList.filter((comment) => comment.id !== selectComment.id)
+        );
+        dispatch(
+          addAndDeleteCommentIdInPost({
+            post,
+            commentId: selectComment.id,
+            isDelete: true,
+          })
+        );
+      } else {
+        dispatch(deletePost(post));
+      }
+      setShowConfirmationModal(false);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const onDeleteClick = (comment) => {
+    setShowConfirmationModal(true);
+    setSelectComment(comment);
   };
 
   const fillAndSetUserComment = async (comment) => {
@@ -91,19 +113,47 @@ const PostItem = ({ post }) => {
 
   return (
     <View className="w-[95%] mx-auto border-gray-200 bg-white rounded-lg mb-4 border shadow-lg">
-      <View className="flex flex-row items-center gap-3 mb-2 mt-1 mx-1">
-        <Image
-          className="h-8 w-8 rounded-full"
-          source={{ uri: post?.profilePic }}
-        />
-        <View>
-          <Text className="font-bold text-sm">{post.displayName}</Text>
-          <Text className="text-[9px] text-gray-400">
-            {moment(post.createdAt).format("DD MMM YYYY HH:mm")}
-          </Text>
+      <View className="flex flex-row justify-between items-center my-3 mx-3 relative">
+        <View className="flex flex-row items-center gap-3">
+          <Image
+            className="h-8 w-8 rounded-full"
+            source={{ uri: post?.profilePic }}
+          />
+          <View>
+            <Text className="font-bold text-sm">{post.displayName}</Text>
+            <Text className="text-[9px] text-gray-400">
+              {moment(post.createdAt).format("DD MMM YYYY HH:mm")}
+            </Text>
+          </View>
         </View>
+        {userDetails.uid === post.updatedBy && (
+          <TouchableOpacity onPress={() => setShowMenuOptions(true)}>
+            <FontAwesome5 name="ellipsis-v" size={18} color="#000" />
+          </TouchableOpacity>
+        )}
+        {showMenuOptions && (
+          <View className="absolute py-2 px-4 w-[120px] bg-white rounded top-0 -right-3 z-50">
+            <TouchableOpacity
+              className="flex flex-row items-center gap-3 mb-2"
+              onPress={() => navigation.navigate("AddPost", { post })}
+            >
+              <FontAwesome5 name="pen" size={12} color="#000" />
+              <Text>Update</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="flex flex-row items-center gap-3"
+              onPress={() => {
+                setShowConfirmationModal(true);
+                setShowMenuOptions(false);
+              }}
+            >
+              <FontAwesome5 name="trash" size={12} color="red" />
+              <Text>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-      <Image source={{ uri: post.picture }} className="w-full h-40 mb-2" />
+      <Image source={{ uri: post.picture }} className="w-full h-40 mb-2 z-0" />
       <View className="pb-1 px-2">
         <Text className="text-base leading-4 font-bold mb-2">{post.title}</Text>
         <RenderHTML
@@ -149,11 +199,13 @@ const PostItem = ({ post }) => {
           <TextInput
             placeholder="Add comment"
             value={commentTxt}
-            className="border border-gray-300 rounded-lg p-1 pl-2 w-[85%] pr-7"
+            className="border border-gray-300 rounded-lg pl-2 w-[85%] pr-7"
             onChangeText={(txt) => setCommentTxt(txt)}
+            multiline={true}
+            numberOfLines={3}
           />
           <TouchableOpacity
-            className="absolute right-3 top-[20%]"
+            className="absolute right-3 top-[30%]"
             disabled={commentTxt.length === 0 ? true : false}
             onPress={addAndUpdateComment}
           >
@@ -192,10 +244,10 @@ const PostItem = ({ post }) => {
                     <TouchableOpacity
                       onPress={() => fillAndSetUserComment(item)}
                     >
-                      <FontAwesome5 name="pen" />
+                      <FontAwesome5 name="pen" size={16} color="#000" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => deleteComments(item.id)}>
-                      <FontAwesome5 name="trash" size={12} color="red" />
+                    <TouchableOpacity onPress={() => onDeleteClick(item)}>
+                      <FontAwesome5 name="trash" size={16} color="red" />
                     </TouchableOpacity>
                   </View>
                 )}
@@ -204,6 +256,20 @@ const PostItem = ({ post }) => {
           />
         </View>
       </View>
+      {showConfiramtionModal && (
+        <ConfirmationModal
+          modalTitle={"Delete"}
+          modalSubTitle={"Are You Sure You Want to Delete this Comment"}
+          btnColor={"bg-red-400"}
+          btnCancelText={"Cancel"}
+          btnOkText={"Delete"}
+          onConfirm={() => onModalConfirm()}
+          onClose={() => {
+            setShowConfirmationModal(false);
+            setSelectComment(null);
+          }}
+        />
+      )}
     </View>
   );
 };

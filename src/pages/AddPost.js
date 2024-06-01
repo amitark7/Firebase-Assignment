@@ -105,12 +105,6 @@ const AddPost = ({ route }) => {
       setImageFromGalleryAndCamera(post.picture);
       richText.current.setContentHTML(post.description);
       setTaggedUsers(post?.taggedUsers);
-    } else {
-      setNewPostData({
-        title: "",
-        description: "",
-        picture: "",
-      });
     }
   }, [post]);
 

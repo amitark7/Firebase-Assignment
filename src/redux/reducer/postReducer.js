@@ -56,8 +56,21 @@ export const updatePost = createAsyncThunk(
   async (data, { getState }) => {
     try {
       const { postList } = getState().post;
+      let imageURL = data.postData.picture;
+
+      if (data.newImageSelected) {
+        const response = await fetch(data.postData.picture);
+        const blob = await response.blob();
+        const imageRef = ref(
+          imageStorage,
+          `Posts/${data.postData.updatedBy}/post/${new Date()}`
+        );
+        await uploadBytes(imageRef, blob);
+        imageURL = await getDownloadURL(imageRef);
+      }
+
       const postDoc = doc(db, "Posts", data.id);
-      await updateDoc(postDoc, data.postData);
+      await updateDoc(postDoc, { ...data.postData, picture: imageURL });
 
       const updatedPostList = postList.map((post) => {
         if (post.id === data.id) {

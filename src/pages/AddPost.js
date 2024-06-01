@@ -38,6 +38,7 @@ const AddPost = ({ route }) => {
   const [taggedUsers, setTaggedUsers] = useState([]);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [userDropDownOptions, setUserDropDownOptions] = useState([]);
+  const [isNewImageSelected, setIsNewImageSelected] = useState(false);
   const { userDetails } = useSelector((state) => state.userDetails);
   const { userList } = useSelector((state) => state.userList);
   const { loading } = useSelector((state) => state.post);
@@ -60,6 +61,7 @@ const AddPost = ({ route }) => {
   };
 
   const submitNewPost = async () => {
+    console.log("Post Data", newPostData);
     const { isValid, errors } = validatePostField(newPostData);
     if (isValid) {
       const postData = {
@@ -71,7 +73,8 @@ const AddPost = ({ route }) => {
       };
 
       if (post) {
-        await dispatch(updatePost({ id: post.id, postData }));
+        const newImageSelected = isNewImageSelected;
+        await dispatch(updatePost({ id: post.id, postData, newImageSelected }));
       } else {
         await dispatch(addPost(postData));
       }
@@ -93,7 +96,15 @@ const AddPost = ({ route }) => {
   }, [userList]);
 
   useEffect(() => {
-    if (imageFromGalleryAndCamera) {
+    if (
+      imageFromGalleryAndCamera &&
+      post &&
+      imageFromGalleryAndCamera !== post.picture
+    ) {
+      setIsNewImageSelected(true);
+      setNewPostData({ ...newPostData, picture: imageFromGalleryAndCamera });
+    } else {
+      setIsNewImageSelected(false);
       setNewPostData({ ...newPostData, picture: imageFromGalleryAndCamera });
     }
   }, [imageFromGalleryAndCamera]);

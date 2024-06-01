@@ -127,8 +127,10 @@ const PostItem = ({ post, navigation }) => {
           </View>
         </View>
         {userDetails.uid === post.updatedBy && (
-          <TouchableOpacity onPress={() => setShowMenuOptions(true)}>
-            <FontAwesome5 name="ellipsis-v" size={18} color="#000" />
+          <TouchableOpacity
+            onPress={() => setShowMenuOptions(!showMenuOptions)}
+          >
+            <FontAwesome5 name="ellipsis-v" size={20} color="#000" />
           </TouchableOpacity>
         )}
         {showMenuOptions && (
@@ -136,7 +138,7 @@ const PostItem = ({ post, navigation }) => {
             <TouchableOpacity
               className="flex flex-row items-center gap-3 mb-2"
               onPress={() => {
-                navigation.navigate("AddPost", { post });
+                navigation.navigate("Update Post", { post });
                 setShowMenuOptions(false);
               }}
             >

@@ -135,7 +135,10 @@ const PostItem = ({ post, navigation }) => {
           <View className="absolute py-2 px-4 w-[120px] bg-white rounded top-0 -right-3 z-50">
             <TouchableOpacity
               className="flex flex-row items-center gap-3 mb-2"
-              onPress={() => navigation.navigate("AddPost", { post })}
+              onPress={() => {
+                navigation.navigate("AddPost", { post });
+                setShowMenuOptions(false);
+              }}
             >
               <FontAwesome5 name="pen" size={12} color="#000" />
               <Text>Update</Text>

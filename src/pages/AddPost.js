@@ -11,7 +11,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import slugify from "slugify";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import { useDispatch, useSelector } from "react-redux";
-import { addPost } from "../redux/reducer/postReducer";
+import { addPost, updatePost } from "../redux/reducer/postReducer";
 import { validatePostField } from "../utils/validationCheck";
 import ConfirmationModal from "../component/ConfirmationModal";
 import ErrorComponent from "../component/ErrorComponent";
@@ -19,8 +19,7 @@ import UploadAndShowPicture from "../component/UploadAndShowPicture";
 import { getUserList } from "../redux/reducer/userListReducer";
 
 const AddPost = ({ route }) => {
-  const post = route.params.post;
-  console.log("Post", post);
+  const post = route.params?.post;
   const richText = useRef();
   DropDownPicker.setMode("BADGE");
   const [newPostData, setNewPostData] = useState({
@@ -46,6 +45,9 @@ const AddPost = ({ route }) => {
 
   const closeConfirmationModalAndClearFieldData = () => {
     setShowConfirmationModal(false);
+    if (post) {
+      route.params.post = null;
+    }
     setNewPostData({
       title: "",
       description: "",
@@ -60,15 +62,19 @@ const AddPost = ({ route }) => {
   const submitNewPost = async () => {
     const { isValid, errors } = validatePostField(newPostData);
     if (isValid) {
-      await dispatch(
-        addPost({
-          ...newPostData,
-          updatedBy: userDetails.uid,
-          taggedUsers: taggedUsers,
-          profilePic: userDetails.picture,
-          displayName: `${userDetails.firstName} ${userDetails.lastName}`,
-        })
-      );
+      const postData = {
+        ...newPostData,
+        updatedBy: userDetails.uid,
+        taggedUsers: taggedUsers,
+        profilePic: userDetails.picture,
+        displayName: `${userDetails.firstName} ${userDetails.lastName}`,
+      };
+
+      if (post) {
+        await dispatch(updatePost({ id: post.id, postData }));
+      } else {
+        await dispatch(addPost(postData));
+      }
       setShowConfirmationModal(true);
     } else {
       setErrors(errors);
@@ -99,8 +105,14 @@ const AddPost = ({ route }) => {
       setImageFromGalleryAndCamera(post.picture);
       richText.current.setContentHTML(post.description);
       setTaggedUsers(post?.taggedUsers);
+    } else {
+      setNewPostData({
+        title: "",
+        description: "",
+        picture: "",
+      });
     }
-  }, []);
+  }, [post]);
 
   return (
     <ScrollView className="bg-gray-300">
@@ -177,7 +189,9 @@ const AddPost = ({ route }) => {
             {loading ? (
               <ActivityIndicator size={"small"} color={"#fff"} />
             ) : (
-              <Text className="text-center text-white">Add Post</Text>
+              <Text className="text-center text-white">
+                {post ? "Update Post" : "Add Post"}
+              </Text>
             )}
           </TouchableOpacity>
         </View>
@@ -185,7 +199,7 @@ const AddPost = ({ route }) => {
           <ConfirmationModal
             btnOkText={"Ok"}
             modalTitle={"Succesfully"}
-            modalSubTitle={"Post Added Successfully"}
+            modalSubTitle={`Post ${post ? "Updated" : "Added"} Successfully`}
             onConfirm={closeConfirmationModalAndClearFieldData}
           />
         )}

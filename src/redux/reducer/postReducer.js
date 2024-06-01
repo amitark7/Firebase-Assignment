@@ -51,6 +51,27 @@ export const addPost = createAsyncThunk(
   }
 );
 
+export const updatePost = createAsyncThunk(
+  "post/updatePost",
+  async (data, { getState }) => {
+    try {
+      const { postList } = getState().post;
+      const postDoc = doc(db, "Posts", data.id);
+      await updateDoc(postDoc, data.postData);
+
+      const updatedPostList = postList.map((post) => {
+        if (post.id === data.id) {
+          return { id: data.id, ...data.postData };
+        }
+        return post;
+      });
+      return updatedPostList;
+    } catch (error) {
+      console.log("Error ", error);
+    }
+  }
+);
+
 export const deletePost = createAsyncThunk(
   "post/deletePost",
   async (post, { getState }) => {
@@ -163,6 +184,16 @@ const postSlice = createSlice({
       })
       .addCase(deletePost.fulfilled, (state, action) => {
         state.postList = action.payload;
+      })
+      .addCase(updatePost.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updatePost.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(updatePost.fulfilled, (state, action) => {
+        state.postList = action.payload;
+        state.loading = false;
       });
   },
 });

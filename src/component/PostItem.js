@@ -134,7 +134,7 @@ const PostItem = ({ post, navigation }) => {
           </TouchableOpacity>
         )}
         {showMenuOptions && (
-          <View className="absolute py-2 px-4 w-[120px] bg-white rounded top-0 -right-3 z-50">
+          <View className="absolute py-2 px-4 w-[120px] bg-white rounded top-7 -right-3 z-50">
             <TouchableOpacity
               className="flex flex-row items-center gap-3 mb-2"
               onPress={() => {
@@ -161,16 +161,19 @@ const PostItem = ({ post, navigation }) => {
       <Image source={{ uri: post.picture }} className="w-full h-40 mb-2 z-0" />
       <View className="pb-1 px-2">
         <Text className="text-base leading-4 font-bold mb-2">{post.title}</Text>
-        <RenderHTML
-          contentWidth={width}
-          source={{
-            html: `${
-              toggleSeeMore
-                ? post.description
-                : post.description.substring(0, 200)
-            }`,
-          }}
-        />
+        {toggleSeeMore ? (
+          <RenderHTML
+            contentWidth={width}
+            source={{ html: post.description }}
+          />
+        ) : (
+          <RenderHTML
+            contentWidth={width}
+            source={{
+              html: `${post.description.substring(0, 200)}`,
+            }}
+          />
+        )}
         {post.description.length > 200 && (
           <TouchableOpacity
             className="mt-2"

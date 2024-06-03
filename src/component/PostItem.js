@@ -42,6 +42,29 @@ const PostItem = ({ post, navigation }) => {
   const { loading, comments } = useSelector((state) => state.comments);
   const dispatch = useDispatch();
 
+  const menuOptions = [
+    {
+      name: "Update",
+      icon: "pen",
+      action: () => updateIconClick(),
+    },
+    {
+      name: "Delete",
+      icon: "trash",
+      action: () => deletePostClick(),
+    },
+  ];
+
+  const updateIconClick = () => {
+    navigation.navigate("Update Post", { post });
+    setIsMenuOpen(false);
+  };
+
+  const deletePostClick = () => {
+    setShowConfirmationModal(true);
+    setIsMenuOpen(false);
+  };
+
   const addAndUpdateComment = async () => {
     const newComment = {
       postId: post.id,
@@ -144,31 +167,20 @@ const PostItem = ({ post, navigation }) => {
             )}
           </MenuTrigger>
           <MenuOptions>
-            <View className="absolute py-2 px-4 w-[150px] bg-white rounded -top-8 -right-5 z-50">
-              <MenuOption>
-                <TouchableOpacity
-                  className="flex flex-row items-center gap-3 mb-2"
-                  onPress={() => {
-                    navigation.navigate("Update Post", { post });
-                    setIsMenuOpen(false);
-                  }}
-                >
-                  <FontAwesome5 name="pen" size={12} color="#000" />
-                  <Text>Update</Text>
-                </TouchableOpacity>
-              </MenuOption>
-              <MenuOption>
-                <TouchableOpacity
-                  className="flex flex-row items-center gap-3"
-                  onPress={() => {
-                    setShowConfirmationModal(true);
-                    setIsMenuOpen(false);
-                  }}
-                >
-                  <FontAwesome5 name="trash" size={12} color="red" />
-                  <Text>Delete</Text>
-                </TouchableOpacity>
-              </MenuOption>
+            <View className="absolute py-1 px-4 w-[150px] bg-white rounded -top-8 -right-5 z-50">
+              {menuOptions.map((option) => {
+                return (
+                  <MenuOption>
+                    <TouchableOpacity
+                      className="flex flex-row items-center gap-3 mb-1"
+                      onPress={option.action}
+                    >
+                      <FontAwesome5 name={option.icon} size={12} color="#000" />
+                      <Text>{option.name}</Text>
+                    </TouchableOpacity>
+                  </MenuOption>
+                );
+              })}
             </View>
           </MenuOptions>
         </Menu>

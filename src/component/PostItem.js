@@ -35,7 +35,7 @@ const PostItem = ({ post, navigation }) => {
   const [toggleSeeMore, setToggleSeeMore] = useState(false);
   const [commentTxt, setCommentTxt] = useState("");
   const [showConfiramtionModal, setShowConfirmationModal] = useState(false);
-  const [selectComment, setSelectComment] = useState(null);
+  const [selectedComment, setSelectedComment] = useState(null);
   const [commentList, setCommentList] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { userDetails } = useSelector((state) => state.userDetails);
@@ -46,7 +46,7 @@ const PostItem = ({ post, navigation }) => {
     {
       name: "Update",
       icon: "pen",
-      action: () => updateIconClick(),
+      action: () => updatePostClick(),
     },
     {
       name: "Delete",
@@ -55,7 +55,7 @@ const PostItem = ({ post, navigation }) => {
     },
   ];
 
-  const updateIconClick = () => {
+  const updatePostClick = () => {
     navigation.navigate("Update Post", { post });
     setIsMenuOpen(false);
   };
@@ -74,13 +74,13 @@ const PostItem = ({ post, navigation }) => {
       displayName: `${userDetails.firstName} ${userDetails.lastName}`,
     };
     try {
-      if (selectComment) {
+      if (selectedComment) {
         await dispatch(
-          updateComment({ ...selectComment, commentTitle: commentTxt })
+          updateComment({ ...selectedComment, commentTitle: commentTxt })
         );
         setCommentList(
           commentList.map((comment) => {
-            if (comment.id === selectComment.id) {
+            if (comment.id === selectedComment.id) {
               return { ...comment, commentTitle: commentTxt };
             }
             return comment;
@@ -97,23 +97,23 @@ const PostItem = ({ post, navigation }) => {
         );
       }
       setCommentTxt("");
-      setSelectComment(null);
+      setSelectedComment(null);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const onModalConfirm = async () => {
+  const onDeleteModalConfirm = async () => {
     try {
-      if (selectComment) {
-        await dispatch(deleteComment(selectComment.id));
+      if (selectedComment) {
+        await dispatch(deleteComment(selectedComment.id));
         setCommentList(
-          commentList.filter((comment) => comment.id !== selectComment.id)
+          commentList.filter((comment) => comment.id !== selectedComment.id)
         );
         dispatch(
           addAndDeleteCommentIdInPost({
             post,
-            commentId: selectComment.id,
+            commentId: selectedComment.id,
             isDelete: true,
           })
         );
@@ -126,14 +126,14 @@ const PostItem = ({ post, navigation }) => {
     }
   };
 
-  const onDeleteClick = (comment) => {
+  const onCommentDeleteClick = (comment) => {
     setShowConfirmationModal(true);
-    setSelectComment(comment);
+    setSelectedComment(comment);
   };
 
-  const fillAndSetUserComment = async (comment) => {
+  const selectEditComment = async (comment) => {
     setCommentTxt(comment.commentTitle);
-    setSelectComment(comment);
+    setSelectedComment(comment);
   };
 
   useEffect(() => {
@@ -276,12 +276,12 @@ const PostItem = ({ post, navigation }) => {
                 </View>
                 {userDetails.uid === item.commentedBy && (
                   <View className="absolute -right-2 flex flex-row gap-2">
-                    <TouchableOpacity
-                      onPress={() => fillAndSetUserComment(item)}
-                    >
+                    <TouchableOpacity onPress={() => selectEditComment(item)}>
                       <FontAwesome5 name="pen" size={16} color="#000" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => onDeleteClick(item)}>
+                    <TouchableOpacity
+                      onPress={() => onCommentDeleteClick(item)}
+                    >
                       <FontAwesome5 name="trash" size={16} color="red" />
                     </TouchableOpacity>
                   </View>
@@ -294,14 +294,16 @@ const PostItem = ({ post, navigation }) => {
       {showConfiramtionModal && (
         <ConfirmationModal
           modalTitle={"Delete"}
-          modalSubTitle={"Are You Sure You Want to Delete this Comment"}
+          modalSubTitle={`Are You Sure You Want to Delete this ${
+            selectedComment ? "Comment" : "Post"
+          }`}
           btnColor={"bg-red-400"}
           btnCancelText={"Cancel"}
           btnOkText={"Delete"}
-          onConfirm={() => onModalConfirm()}
+          onConfirm={() => onDeleteModalConfirm()}
           onClose={() => {
             setShowConfirmationModal(false);
-            setSelectComment(null);
+            setSelectedComment(null);
           }}
         />
       )}

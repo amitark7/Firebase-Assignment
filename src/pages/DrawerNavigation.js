@@ -112,6 +112,7 @@ const DrawerNavigation = ({ navigation }) => {
         options={{
           drawerLabel: () => null,
           drawerIcon: () => null,
+          drawerItemStyle: { display: "none" },
         }}
       />
     </Drawer.Navigator>

@@ -23,6 +23,12 @@ import {
   deletePost,
 } from "../redux/reducer/postReducer";
 import ConfirmationModal from "./ConfirmationModal";
+import {
+  Menu,
+  MenuOption,
+  MenuOptions,
+  MenuTrigger,
+} from "react-native-popup-menu";
 
 const PostItem = ({ post, navigation }) => {
   const { width } = useWindowDimensions();
@@ -31,7 +37,7 @@ const PostItem = ({ post, navigation }) => {
   const [showConfiramtionModal, setShowConfirmationModal] = useState(false);
   const [selectComment, setSelectComment] = useState(null);
   const [commentList, setCommentList] = useState([]);
-  const [showMenuOptions, setShowMenuOptions] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { userDetails } = useSelector((state) => state.userDetails);
   const { loading, comments } = useSelector((state) => state.comments);
   const dispatch = useDispatch();
@@ -126,37 +132,41 @@ const PostItem = ({ post, navigation }) => {
             </Text>
           </View>
         </View>
-        {userDetails.uid === post.updatedBy && (
-          <TouchableOpacity
-            onPress={() => setShowMenuOptions(!showMenuOptions)}
-          >
-            <FontAwesome5 name="ellipsis-v" size={20} color="#000" />
-          </TouchableOpacity>
-        )}
-        {showMenuOptions && (
-          <View className="absolute py-2 px-4 w-[120px] bg-white rounded top-7 -right-3 z-50">
-            <TouchableOpacity
-              className="flex flex-row items-center gap-3 mb-2"
-              onPress={() => {
-                navigation.navigate("Update Post", { post });
-                setShowMenuOptions(false);
-              }}
-            >
-              <FontAwesome5 name="pen" size={12} color="#000" />
-              <Text>Update</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="flex flex-row items-center gap-3"
-              onPress={() => {
-                setShowConfirmationModal(true);
-                setShowMenuOptions(false);
-              }}
-            >
-              <FontAwesome5 name="trash" size={12} color="red" />
-              <Text>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        <Menu opened={isMenuOpen} onBackdropPress={() => setIsMenuOpen(false)}>
+          <MenuTrigger onPress={() => setIsMenuOpen(true)}>
+            {userDetails.uid === post.updatedBy && (
+              <FontAwesome5 name="ellipsis-v" size={20} color="#000" />
+            )}
+          </MenuTrigger>
+          <MenuOptions>
+            <View className="absolute py-2 px-4 w-[150px] bg-white rounded -top-16 -right-3 z-50">
+              <MenuOption>
+                <TouchableOpacity
+                  className="flex flex-row items-center gap-3 mb-2"
+                  onPress={() => {
+                    navigation.navigate("Update Post", { post });
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  <FontAwesome5 name="pen" size={12} color="#000" />
+                  <Text>Update</Text>
+                </TouchableOpacity>
+              </MenuOption>
+              <MenuOption>
+                <TouchableOpacity
+                  className="flex flex-row items-center gap-3"
+                  onPress={() => {
+                    setShowConfirmationModal(true);
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  <FontAwesome5 name="trash" size={12} color="red" />
+                  <Text>Delete</Text>
+                </TouchableOpacity>
+              </MenuOption>
+            </View>
+          </MenuOptions>
+        </Menu>
       </View>
       <Image source={{ uri: post.picture }} className="w-full h-40 mb-2 z-0" />
       <View className="pb-1 px-2">

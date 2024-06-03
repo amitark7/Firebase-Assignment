@@ -5,6 +5,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { getPostList } from "../redux/reducer/postReducer";
 import PostItem from "../component/PostItem";
 import { getComments } from "../redux/reducer/commentReducer";
+import { MenuProvider } from "react-native-popup-menu";
 
 const AllPostPage = ({ navigation }) => {
   const { postList, loading } = useSelector((state) => state.post);
@@ -12,7 +13,7 @@ const AllPostPage = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      dispatch(getComments())
+      dispatch(getComments());
     }, [dispatch])
   );
 
@@ -21,22 +22,24 @@ const AllPostPage = ({ navigation }) => {
   }, []);
 
   return (
-    <View className="py-4 flex-1">
-      <FlatList
-        data={postList}
-        keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item }) => (
-          <PostItem post={item} navigation={navigation} />
-        )}
-        ListFooterComponent={
-          loading && (
-            <View className="flex-1 justify-center items-center">
-              <ActivityIndicator size={"large"} />
-            </View>
-          )
-        }
-      />
-    </View>
+    <MenuProvider>
+      <View className="py-4 flex-1">
+        <FlatList
+          data={postList}
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item }) => (
+            <PostItem post={item} navigation={navigation} />
+          )}
+          ListFooterComponent={
+            loading && (
+              <View className="flex-1 justify-center items-center">
+                <ActivityIndicator size={"large"} />
+              </View>
+            )
+          }
+        />
+      </View>
+    </MenuProvider>
   );
 };
 

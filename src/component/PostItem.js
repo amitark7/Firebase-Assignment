@@ -119,7 +119,7 @@ const PostItem = ({ post, navigation }) => {
 
   return (
     <View className="w-[95%] mx-auto border-gray-200 bg-white rounded-lg mb-4 border shadow-lg">
-      <View className="flex flex-row justify-between items-center my-3 mx-3 relative">
+      <View className="flex flex-row justify-between items-center my-3 mx-3 mr-5 relative">
         <View className="flex flex-row items-center gap-3">
           <Image
             className="h-8 w-8 rounded-full"
@@ -135,11 +135,16 @@ const PostItem = ({ post, navigation }) => {
         <Menu opened={isMenuOpen} onBackdropPress={() => setIsMenuOpen(false)}>
           <MenuTrigger onPress={() => setIsMenuOpen(true)}>
             {userDetails.uid === post.updatedBy && (
-              <FontAwesome5 name="ellipsis-v" size={20} color="#000" />
+              <TouchableOpacity
+                className="px-4"
+                onPress={() => setIsMenuOpen(true)}
+              >
+                <FontAwesome5 name="ellipsis-v" size={20} color="#000" />
+              </TouchableOpacity>
             )}
           </MenuTrigger>
           <MenuOptions>
-            <View className="absolute py-2 px-4 w-[150px] bg-white rounded -top-16 -right-3 z-50">
+            <View className="absolute py-2 px-4 w-[150px] bg-white rounded -top-8 -right-5 z-50">
               <MenuOption>
                 <TouchableOpacity
                   className="flex flex-row items-center gap-3 mb-2"

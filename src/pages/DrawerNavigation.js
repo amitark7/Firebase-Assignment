@@ -109,7 +109,10 @@ const DrawerNavigation = ({ navigation }) => {
       <Drawer.Screen
         name="Update Post"
         component={AddPost}
-        options={{ drawerLabel: () => null }}
+        options={{
+          drawerLabel: () => null,
+          drawerIcon: () => null,
+        }}
       />
     </Drawer.Navigator>
   );

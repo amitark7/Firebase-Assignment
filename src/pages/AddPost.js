@@ -61,7 +61,6 @@ const AddPost = ({ route }) => {
   };
 
   const submitNewPost = async () => {
-    console.log("Post Data", newPostData);
     const { isValid, errors } = validatePostField(newPostData);
     if (isValid) {
       const postData = {

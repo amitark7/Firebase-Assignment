@@ -102,7 +102,7 @@ const LoginPage = ({ navigation }) => {
         <TouchableOpacity
           className={`w-full ${
             loading ? "bg-gray-400" : "bg-blue-500"
-          } py-2 text-xl rounded-md mb-4 font-semibold`}
+          } py-2 text-xl items-center rounded-md mb-4 font-semibold`}
           onPress={onLoginSubmit}
           disabled={loading}
         >

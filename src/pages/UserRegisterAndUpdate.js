@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -46,7 +47,7 @@ const UserRegisterAndUpdate = ({ navigation }) => {
   const [showCamera, setShowCamera] = useState(false);
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
-  const { user, loading } = useSelector((state) => state.auth);
+  const { loading } = useSelector((state) => state.auth);
   const { userDetails, isLoading } = useSelector((state) => state.userDetails);
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });

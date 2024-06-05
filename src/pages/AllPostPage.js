@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import { FlatList, View, ActivityIndicator } from "react-native";
 import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";

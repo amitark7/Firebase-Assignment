@@ -96,7 +96,30 @@ const UserRegisterAndUpdate = ({ navigation }) => {
     } else {
       navigation.navigate("HomePage");
     }
+    resetField();
     setShowConfirmationModal(false);
+  };
+
+  const resetField = () => {
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      password: "",
+      confirmPassword: "",
+      picture: "",
+    });
+    setErrors({
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      password: "",
+      confirmPassword: "",
+      picture: null,
+    });
+    setImage(null);
   };
 
   useEffect(() => {

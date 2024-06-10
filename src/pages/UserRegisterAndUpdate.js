@@ -85,19 +85,19 @@ const UserRegisterAndUpdate = ({ navigation }) => {
           setShowConfirmationModal(true);
         }
       }
+      resetField();
     } else {
       setErrors(errors);
     }
   };
 
   const handleNavigate = () => {
+    setShowConfirmationModal(false);
     if (!userDetails.id) {
       navigation.replace("HomePage");
     } else {
       navigation.navigate("HomePage");
     }
-    resetField();
-    setShowConfirmationModal(false);
   };
 
   const resetField = () => {

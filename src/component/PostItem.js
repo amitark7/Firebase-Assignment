@@ -168,9 +168,9 @@ const PostItem = ({ post, navigation }) => {
           </MenuTrigger>
           <MenuOptions>
             <View className="absolute py-1 px-4 w-[150px] bg-white rounded -top-8 -right-5 z-50">
-              {menuOptions.map((option) => {
+              {menuOptions.map((option, index) => {
                 return (
-                  <MenuOption>
+                  <MenuOption key={index}>
                     <TouchableOpacity
                       className="flex flex-row items-center gap-3 mb-1"
                       onPress={option.action}

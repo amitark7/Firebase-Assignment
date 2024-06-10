@@ -28,7 +28,7 @@ const UserRegisterAndUpdate = ({ navigation }) => {
     phoneNumber: "",
     password: "",
     confirmPassword: "",
-    // picture: "",
+    picture: "",
   });
 
   const [errors, setErrors] = useState({
@@ -38,7 +38,7 @@ const UserRegisterAndUpdate = ({ navigation }) => {
     phoneNumber: "",
     password: "",
     confirmPassword: "",
-    // picture: null,
+    picture: null,
   });
 
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -54,10 +54,10 @@ const UserRegisterAndUpdate = ({ navigation }) => {
     setErrors({ ...errors, [name]: "" });
   };
 
-  // const handleImageSelect = async () => {
-  //   const imageURL = (await handleImagePicker()) || null;
-  //   setFormData({ ...formData, picture: imageURL });
-  // };
+  const handleImageSelect = async () => {
+    const imageURL = (await handleImagePicker()) || null;
+    setFormData({ ...formData, picture: imageURL });
+  };
 
   const onSubmit = async () => {
     const { isValid, errors } = validateForm(
@@ -65,7 +65,6 @@ const UserRegisterAndUpdate = ({ navigation }) => {
       false,
       userDetails.id ? true : false
     );
-    console.log("Form data",formData,"isVallid",isValid,"Errors ",errors);
     if (isValid) {
       if (userDetails.id) {
         await dispatch(
@@ -95,7 +94,7 @@ const UserRegisterAndUpdate = ({ navigation }) => {
     if (!userDetails.id) {
       navigation.replace("HomePage");
     } else {
-      navigation.navigate("AllPostPage");
+      navigation.navigate("HomePage");
     }
     setShowConfirmationModal(false);
   };
@@ -108,16 +107,16 @@ const UserRegisterAndUpdate = ({ navigation }) => {
         firstName: userDetails?.firstName,
         email: userDetails?.email,
         phoneNumber: userDetails?.phoneNumber,
-        // picture: userDetails?.picture,
+        picture: userDetails?.picture,
       });
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (image) {
-  //     setFormData({ ...formData, picture: image });
-  //   }
-  // }, [image]);
+  useEffect(() => {
+    if (image) {
+      setFormData({ ...formData, picture: image });
+    }
+  }, [image]);
 
   return (
     <SafeAreaView className="flex-1">
@@ -217,6 +216,34 @@ const UserRegisterAndUpdate = ({ navigation }) => {
                 </View>
               </>
             )}
+            <View className="mb-4">
+              <View className="flex flex-row justify-between items-center">
+                <TouchableOpacity
+                  className="bg-blue-500 rounded-md px-4 py-2 sm:py-3"
+                  onPress={handleImageSelect}
+                >
+                  <FontAwesome5
+                    name="image"
+                    size={28}
+                    color="#fff"
+                    className="text-center"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setShowCamera(true)}
+                  className="bg-blue-500 rounded-md px-4 py-2 sm:py-3"
+                >
+                  <FontAwesome5 name="camera" size={28} color="#fff" />
+                </TouchableOpacity>
+              </View>
+              <ErrorComponent errorMessage={errors.picture} />
+              {formData.picture && (
+                <Image
+                  source={{ uri: formData.picture }}
+                  className="w-24 h-24 rounded-md mb-1 mt-1"
+                />
+              )}
+            </View>
             <TouchableOpacity
               className={`${
                 loading || isLoading ? "bg-gray-200" : "bg-green-500"

@@ -7,7 +7,6 @@ const validateEmail = (email) => {
 };
 
 const validateField = (field, data = null) => {
-  console.log("Data for Vallidating",data,field);
   if (!data.trim()) {
     return `${field} is required`;
   }
@@ -41,7 +40,6 @@ const validatePhoneNumber = (phoneNumber, length) => {
 };
 
 export const validateForm = (userData, isLogin = false, isUpdate = false) => {
-  console.log("User Data ",userData);
   let isValid = true;
   errors = {};
   errors.email = validateField("Email", userData?.email);
@@ -57,7 +55,7 @@ export const validateForm = (userData, isLogin = false, isUpdate = false) => {
   if (!isLogin) {
     errors.firstName = validateField("First name", userData?.firstName);
     errors.lastName = validateField("Last Name", userData?.lastName);
-    // errors.picture = validateField("Picture", userData?.picture);
+    errors.picture = validateField("Picture", userData?.picture);
 
     !isUpdate &&
       (errors.confirmPassword = validateField(

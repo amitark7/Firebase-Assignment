@@ -1,32 +1,118 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { db, imageStorage } from "../../firebase/firebaseConfig";
-import { getDownloadURL, ref, uploadBytes } from "@firebase/storage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "@firebase/storage";
 
-export const addPost = createAsyncThunk("post/addPost", async (data) => {
-  try {
-    const timestamp = new Date().toISOString();
+export const addPost = createAsyncThunk(
+  "post/addPost",
+  async (data, { getState }) => {
+    try {
+      const { postList } = getState().post;
+      const timestamp = new Date().toISOString();
 
-    const response = await fetch(data.picture);
-    const blob = await response.blob();
-    const imageRef = ref(
-      imageStorage,
-      `Posts/${data.updatedBy}/post/${new Date()}"`
-    );
-    await uploadBytes(imageRef, blob);
-    const imageURL = await getDownloadURL(imageRef);
+      const response = await fetch(data.picture);
+      const blob = await response.blob();
+      const imageRef = ref(
+        imageStorage,
+        `Posts/${data.updatedBy}/post/${new Date()}"`
+      );
+      await uploadBytes(imageRef, blob);
+      const imageURL = await getDownloadURL(imageRef);
 
-    const postData = {
-      ...data,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-      picture: imageURL,
-    };
-    await addDoc(collection(db, "Posts"), postData);
-  } catch (error) {
-    return error;
+      const postData = {
+        ...data,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        picture: imageURL,
+      };
+      const result = await addDoc(collection(db, "Posts"), postData);
+      const updatedPostList = [
+        { ...postData, id: result._key.path.segments[1] },
+        ...postList,
+      ];
+      return updatedPostList;
+    } catch (error) {
+      return error;
+    }
   }
-});
+);
+
+export const updatePost = createAsyncThunk(
+  "post/updatePost",
+  async (data, { getState }) => {
+    try {
+      const { postList } = getState().post;
+      let imageURL = data.postData.picture;
+
+      if (data.newImageSelected) {
+        const response = await fetch(data.postData.picture);
+        const blob = await response.blob();
+        const imageRef = ref(
+          imageStorage,
+          `Posts/${data.postData.updatedBy}/post/${new Date()}`
+        );
+        await uploadBytes(imageRef, blob);
+        imageURL = await getDownloadURL(imageRef);
+      }
+
+      const postDoc = doc(db, "Posts", data.id);
+      await updateDoc(postDoc, { ...data.postData, picture: imageURL });
+
+      const updatedPostList = postList.map((post) => {
+        if (post.id === data.id) {
+          return { id: data.id, ...data.postData };
+        }
+        return post;
+      });
+      return updatedPostList;
+    } catch (error) {
+      console.log("Error ", error);
+    }
+  }
+);
+
+export const deletePost = createAsyncThunk(
+  "post/deletePost",
+  async (post, { getState }) => {
+    try {
+      const { postList } = getState().post;
+      const postDoc = doc(db, "Posts", post.id);
+      await deleteDoc(postDoc);
+
+      const commentQuery = query(
+        collection(db, "comments"),
+        where("postId", "==", post.id)
+      );
+      const commentSnapshot = await getDocs(commentQuery);
+      const deleteCommentPromises = commentSnapshot?.docs?.map(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
+      await Promise.all(deleteCommentPromises);
+
+      const pictureRef = ref(imageStorage, post.picture);
+      await deleteObject(pictureRef);
+
+      const updatedPostList = postList.filter((item) => item.id !== post.id);
+      return updatedPostList;
+    } catch (error) {
+      return error;
+    }
+  }
+);
 
 export const getPostList = createAsyncThunk("post/getPostList", async () => {
   try {
@@ -41,6 +127,43 @@ export const getPostList = createAsyncThunk("post/getPostList", async () => {
   }
 });
 
+export const addAndDeleteCommentIdInPost = createAsyncThunk(
+  "post/addAndDeleteCommentIdInPost",
+  async (data, { getState }) => {
+    try {
+      const { postList } = getState().post;
+
+      const updatedPostList = postList.map((post) => {
+        if (post.id === data.post.id) {
+          let updatedComments = [];
+          if (data?.isDelete) {
+            updatedComments = post.comments.filter(
+              (commentId) => commentId !== data.commentId
+            );
+            return { ...post, comments: updatedComments };
+          }
+          updatedComments = post.comments
+            ? [...post.comments, data.commentId]
+            : [data.commentId];
+          return { ...post, comments: updatedComments };
+        }
+        return post;
+      });
+
+      const postDoc = doc(db, "Posts", data.post.id);
+      await updateDoc(postDoc, {
+        ...data.post,
+        comments: updatedPostList.find((post) => post.id === data.post.id)
+          .comments,
+      });
+
+      return updatedPostList;
+    } catch (error) {
+      return error;
+    }
+  }
+);
+
 const postSlice = createSlice({
   name: "post",
   initialState: {
@@ -52,8 +175,9 @@ const postSlice = createSlice({
       .addCase(addPost.pending, (state) => {
         state.loading = true;
       })
-      .addCase(addPost.fulfilled, (state) => {
+      .addCase(addPost.fulfilled, (state, action) => {
         state.loading = false;
+        state.postList = action.payload;
       })
       .addCase(addPost.rejected, (state) => {
         state.loading = false;
@@ -66,6 +190,22 @@ const postSlice = createSlice({
         state.loading = false;
       })
       .addCase(getPostList.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(addAndDeleteCommentIdInPost.fulfilled, (state, action) => {
+        state.postList = action.payload;
+      })
+      .addCase(deletePost.fulfilled, (state, action) => {
+        state.postList = action.payload;
+      })
+      .addCase(updatePost.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updatePost.rejected, (state) => {
+        state.loading = false;
+      })
+      .addCase(updatePost.fulfilled, (state, action) => {
+        state.postList = action.payload;
         state.loading = false;
       });
   },

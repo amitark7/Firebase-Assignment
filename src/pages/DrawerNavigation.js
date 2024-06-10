@@ -106,6 +106,15 @@ const DrawerNavigation = ({ navigation }) => {
           ),
         }}
       />
+      <Drawer.Screen
+        name="Update Post"
+        component={AddPost}
+        options={{
+          drawerLabel: () => null,
+          drawerIcon: () => null,
+          drawerItemStyle: { display: "none" },
+        }}
+      />
     </Drawer.Navigator>
   );
 };

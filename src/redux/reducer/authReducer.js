@@ -35,7 +35,7 @@ export const saveUserData = createAsyncThunk(
         lastName: data?.formData.lastName,
         phoneNumber: data?.formData.phoneNumber,
         picture: imageURL,
-        email: data?.formData.email,
+        email: data?.formData.email, 
         uid: data.userUID,
       };
 

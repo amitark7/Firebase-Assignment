@@ -24,17 +24,17 @@ export const saveUserData = createAsyncThunk(
   "auth/saveUserData",
   async (data) => {
     try {
-      const response = await fetch(data.formData.picture);
-      const blob = await response.blob();
-      const imageRef = ref(imageStorage, "images/" + Date.now());
-      await uploadBytes(imageRef, blob);
-      const imageURL = await getDownloadURL(imageRef);
+      // const response = await fetch(data.formData.picture);
+      // const blob = await response.blob();
+      // const imageRef = ref(imageStorage, "images/" + Date.now());
+      // await uploadBytes(imageRef, blob);
+      // const imageURL = await getDownloadURL(imageRef);
 
       const userData = {
         firstName: data?.formData.firstName,
         lastName: data?.formData.lastName,
         phoneNumber: data?.formData.phoneNumber,
-        picture: imageURL,
+        // picture: imageURL,
         email: data?.formData.email,
         uid: data.userUID,
       };
